@@ -16,7 +16,7 @@ const ethers = require('ethers');
 const addresses = {
 WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 pancakeRouter: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
-recipient: '0x5a7bba5c62d660c9eba4ba27dcde1ea82d0e18dc'
+recipient: '' // Your wallet address
 }
 const investmentAmount = '0.2'; // The amount you want to buy in BNB
 const myGasLimit = 1000000;
@@ -38,7 +38,6 @@ pancakeAbi,
 account
 );
 const buy = async () =>{
-	try{
 	if (count == 0){
 		count++;
 		console.log('Buying');
@@ -57,9 +56,6 @@ const buy = async () =>{
 		console.log('Transaction receipt');
 		console.log(receipt);
 		process.exit(); 
-	}}
-	catch(e){
-		console.log(e);
 	}
 } 
 (async () => {

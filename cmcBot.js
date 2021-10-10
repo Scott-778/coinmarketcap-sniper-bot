@@ -58,8 +58,8 @@ const buy = async () =>{
 	}
 } 
 (async () => {
-  const client = new TelegramClient(stringSession, apiId, apiHash, {
-    connectionRetries: 5,
+	const client = new TelegramClient(stringSession, apiId, apiHash, {
+        connectionRetries: 5,
   });
   await client.start({
     phoneNumber: async () => await input.text("number ?"),
@@ -67,11 +67,9 @@ const buy = async () =>{
     phoneCode: async () => await input.text("Code ?"),
     onError: (err) => console.log(err),
   });
-  console.log("You should now be connected.");
-  console.log(client.session.save()); // Save this string to avoid logging in again
- 
- client.addEventHandler(onNewMessage, new NewMessage({}));
- 
+	console.log("You should now be connected.");
+        console.log(client.session.save()); // Save this string to avoid logging in again
+        client.addEventHandler(onNewMessage, new NewMessage({}));
 })();
 async function onNewMessage(event) {
     const message = event.message;

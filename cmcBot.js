@@ -4,7 +4,6 @@ https://t.me/joinchat/bZpsA9yrHmkyZjE0 use this link and subscribe
 
 if this is useful to you donate to 0x5a7bba5c62d660c9eba4ba27dcde1ea82d0e18dc
  */
-
 const {TelegramClient } = require("telegram"); //npm install telegram
 const { StringSession } = require("telegram/sessions");
 const input = require("input"); // npm install input
@@ -74,14 +73,11 @@ const buy = async () =>{
  client.addEventHandler(onNewMessage, new NewMessage({}));
  
 })();
- 
 async function onNewMessage(event) {
     const message = event.message;
 	var mess = message.message.replace(/\n/g, " ").split(" ");
    	var address = '';
-	
-	for (var i = 0; i < mess.length; i++){
-				
+	for (var i = 0; i < mess.length; i++){	
 		if (mess[i].length == 42 && mess[i].startsWith("0x")){
 			address = mess[i];
 		}		

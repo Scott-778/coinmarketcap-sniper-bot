@@ -21,9 +21,9 @@ const investmentAmount = '0.2'; // The amount you want to buy in BNB
 const myGasLimit = 1000000;
 const mnemonic = ''; // Your wallet seed phrase
 const mygasPrice = ethers.utils.parseUnits('15', 'gwei');
-const node2 = 'wss://bsc.getblock.io/mainnet/?api_key= enter api key here'; // sign up for getblock.io to get api key
+const node = 'https://bsc-dataseed.binance.org/';
 const wallet = new ethers.Wallet.fromMnemonic(mnemonic);
-const wsProvider = new ethers.providers.WebSocketProvider(node2);
+const wsProvider = new ethers.providers.WebSocketProvider(node);
 const account = wallet.connect(wsProvider); 
 let tokenIn, tokenOut;
 tokenIn = addresses.WBNB;

@@ -23,7 +23,7 @@ const mnemonic = ''; // Your wallet seed phrase
 const mygasPrice = ethers.utils.parseUnits('15', 'gwei');
 const node = 'https://bsc-dataseed.binance.org/';
 const wallet = new ethers.Wallet.fromMnemonic(mnemonic);
-const wsProvider = new ethers.providers.WebSocketProvider(node);
+const wsProvider = new ethers.providers.JsonRpcProvider(node);
 const account = wallet.connect(wsProvider); 
 let tokenIn, tokenOut;
 tokenIn = addresses.WBNB;

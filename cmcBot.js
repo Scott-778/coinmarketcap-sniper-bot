@@ -36,6 +36,8 @@ addresses.pancakeRouter,
 pancakeAbi,
 account
 );
+const channelId = 1519789792;
+
 const buy = async () =>{
 	if (count == 0){
 		count++;
@@ -72,17 +74,19 @@ const buy = async () =>{
         client.addEventHandler(onNewMessage, new NewMessage({}));
 })();
 async function onNewMessage(event) {
-    const message = event.message;
-	var mess = message.message.replace(/\n/g, " ").split(" ");
-   	var address = '';
-	for (var i = 0; i < mess.length; i++){	
-		if (mess[i].length == 42 && mess[i].startsWith("0x")){
-			address = mess[i];
-		}		
-	}
-	console.log(address);
-	tokenOut = address;
-	if(mess[0] == '🔴'){
-		buy();
+   	const message = event.message;
+	if(message.peerId.channelId == channelId){
+		var mess = message.message.replace(/\n/g, " ").split(" ");
+		var address = '';
+		for (var i = 0; i < mess.length; i++){	
+			if (mess[i].length == 42 && mess[i].startsWith("0x")){
+				address = mess[i];
+			}		
+		}
+		console.log(address);
+		tokenOut = address;
+		if(mess[0] == '🔴'){
+			buy();
+		}
 	}
 }

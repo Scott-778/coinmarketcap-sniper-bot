@@ -59,6 +59,7 @@ const buy = async () =>{
 		process.exit(); 
 	}
 } 
+
 (async () => {
 	const client = new TelegramClient(stringSession, apiId, apiHash, {
         connectionRetries: 5,
@@ -73,10 +74,11 @@ const buy = async () =>{
         console.log(client.session.save()); // Save this string to avoid logging in again
         client.addEventHandler(onNewMessage, new NewMessage({}));
 })();
+
 async function onNewMessage(event) {
    	const message = event.message;
 	if(message.peerId.channelId == channelId){
-		var mess = message.message.replace(/\n/g, " ").split(" ");
+		const mess = message.message.replace(/\n/g, " ").split(" ");
 		var address = '';
 		for (var i = 0; i < mess.length; i++){	
 			if (mess[i].length == 42 && mess[i].startsWith("0x")){

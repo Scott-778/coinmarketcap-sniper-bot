@@ -65,9 +65,9 @@ const buy = async () =>{
         connectionRetries: 5,
   });
   await client.start({
-    phoneNumber: async () => await input.text("number ?"),
-    password: async () => await input.text("password?"),
-    phoneCode: async () => await input.text("Code ?"),
+    phoneNumber: async () => await input.text("number?"),
+    password: async () => await input.text("2F password?"),
+    phoneCode: async () => await input.text("Code?"),
     onError: (err) => console.log(err),
   });
 	console.log("You should now be connected.");

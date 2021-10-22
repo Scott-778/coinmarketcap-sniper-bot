@@ -18,7 +18,7 @@ recipient: '' // Your wallet address
 const investmentAmount = '0.2'; // The amount you want to buy in BNB
 const myGasLimit = 1000000;
 const mnemonic = ''; // Your wallet seed phrase
-const mygasPrice = ethers.utils.parseUnits('15', 'gwei');
+const mygasPrice = ethers.utils.parseUnits('15', 'gwei'); // Adjust your gas here, the higher the better
 const node = 'https://bsc-dataseed.binance.org/';
 const wallet = new ethers.Wallet.fromMnemonic(mnemonic);
 const wsProvider = new ethers.providers.JsonRpcProvider(node);

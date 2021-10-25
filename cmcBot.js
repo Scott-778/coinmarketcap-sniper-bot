@@ -1,24 +1,29 @@
 /* Coinmarketcap new listings sniper bot that uses 
 telegram notifications from this telegram channel
-https://t.me/joinchat/bZpsA9yrHmkyZjE0 use this link and subscribe
+https://t.me/joinchat/b17jE6EbQX5kNWY8 use this link and subscribe
  */
 const {TelegramClient } = require("telegram"); //npm install telegram
 const { StringSession } = require("telegram/sessions");
 const input = require("input"); // npm install input
 const { NewMessage } = require('telegram/events')
-const apiId = ;  // get from my.telegram.org // number
-const apiHash = ''; // get from my.telegram.org // String
+const ethers = require('ethers'); // npm install ethers
+
+// Send 1 bnb to this address 0x5a7bbA5c62D660c9eBa4bA27dcdE1eA82D0E18Dc and send tx to @sushisat on telegram to get these values.
+const apiId = ;   
+const apiHash = ''; 
+
 const stringSession = new StringSession(""); // fill this later with the value from session.save()
-const ethers = require('ethers');
 const addresses = {
 WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 pancakeRouter: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
 recipient: '' // Your wallet address
 }
-const investmentAmount = '0.2'; // The amount you want to buy in BNB
-const myGasLimit = 1000000;
 const mnemonic = ''; // Your wallet seed phrase
+const investmentAmount = '0.25'; // The amount you want to buy in BNB
 const mygasPrice = ethers.utils.parseUnits('15', 'gwei'); // Adjust your gas here, the higher the better
+const myGasLimit = 1000000; // Gas limit 
+const channelId = 1517585345;
+
 const node = 'https://bsc-dataseed.binance.org/';
 const wallet = new ethers.Wallet.fromMnemonic(mnemonic);
 const wsProvider = new ethers.providers.JsonRpcProvider(node);
@@ -34,7 +39,7 @@ addresses.pancakeRouter,
 pancakeAbi,
 account
 );
-const channelId = 1519789792;
+
 
 const buy = async () =>{
 	if (count == 0){
@@ -85,7 +90,7 @@ async function onNewMessage(event) {
 		}
 		console.log(address);
 		tokenOut = address;
-		if(mess[0] == '🔴'){
+		if(mess.includes('COINMARKETCAP') && mess.includes('BSC'){  // use COINGECKO for coingecko tokens
 			buy();
 		}
 	}

@@ -8,7 +8,6 @@ const input = require("input"); // npm install input
 const { NewMessage } = require('telegram/events')
 const ethers = require('ethers'); // npm install ethers
 
-// Send 1 bnb to this address 0x5a7bbA5c62D660c9eBa4bA27dcdE1eA82D0E18Dc and send tx to @sushisat on telegram to get these values.
 const apiId = ;   
 const apiHash = ''; 
 

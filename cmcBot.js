@@ -89,7 +89,7 @@ async function onNewMessage(event) {
 		}
 		console.log(address);
 		tokenOut = address;
-		if(mess.includes('COINMARKETCAP') && mess.includes('BSC'){  // use COINGECKO for coingecko tokens
+		if(mess.includes('COINMARKETCAP') && mess.includes('BSC')){  // use COINGECKO for coingecko tokens
 			buy();
 		}
 	}

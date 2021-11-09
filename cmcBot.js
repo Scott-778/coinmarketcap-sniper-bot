@@ -91,9 +91,10 @@ async function onNewMessage(event) {
 				address = mess[i];
 			}		
 		}
-		console.log(address);
-		tokenOut = address;
+		
 		if(mess.includes('COINMARKETCAP') && mess.includes('BNB')){  // use COINGECKO for coingecko tokens
+			console.log(address);
+			tokenOut = address;
 			buy();
 		}
 	}

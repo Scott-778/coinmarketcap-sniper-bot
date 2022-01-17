@@ -15,7 +15,6 @@ const { StringSession } = require("telegram/sessions");
 const input = require("input"); // npm install input
 const { NewMessage } = require('telegram/events')
 const ethers = require('ethers'); // npm install ethers
-
 /* ----------------------------------- */
 const apiId = ;   
 const apiHash = ''; 

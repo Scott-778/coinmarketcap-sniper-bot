@@ -98,13 +98,13 @@ async function onNewMessage(event) {
 				address = msg[i];
 			}
 			if (msg[i] == "(buy)"){
-				var slipBuy = parseFloat(mess[i - 1]);
+				const slipBuy = parseInt(mess[i - 1]);
 				if (slipBuy > maxTax){
 					shouldBuy = false;
 				}
 			}
 			if (msg[i] == "(sell)"){
-				var slipSell = parseFloat(mess[i - 1]);
+				const slipSell = parseInt(mess[i - 1]);
 				if (slipSell > maxTax){
 					shouldBuy = false;
 				}

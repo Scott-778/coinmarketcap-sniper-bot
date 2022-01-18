@@ -28,6 +28,8 @@ recipient: '' // Your wallet address
 const mnemonic = ''; // Your wallet seed phrase
 const myGasPrice = ethers.utils.parseUnits('6', 'gwei'); // Adjust your gas here, the higher the better
 const myGasLimit = 1000000; // Gas limit 
+
+const maxTax = 10;
 const investmentAmount = '1.2'; // The amount you want to buy in BUSD
 /* ----------------------------------- */
 
@@ -90,19 +92,32 @@ async function onNewMessage(event) {
 	if(message.peerId.channelId == channelId){
 		const msg = message.message.replace(/\n/g, " ").split(" ");
 		var address = '';
+		var shouldBuy = true;
 		for (var i = 0; i < msg.length; i++){	
 			if (msg[i].length == 42 && msg[i].startsWith("0x")){
 				address = msg[i];
-			}		
+			}
+			if (msg[i] == "(buy)"){
+				var slipBuy = parseFloat(mess[i - 1]);
+				if (slipBuy > maxTax){
+					shouldBuy = false;
+				}
+			}
+			if (msg[i] == "(sell)"){
+				var slipSell = parseFloat(mess[i - 1]);
+				if (slipSell > maxTax){
+					shouldBuy = false;
+				}
+			}
 		}
 		
-		if(msg.includes('BNB')){  
+		if(shouldBuy && msg.includes('BNB')){  
 			console.log(address);
 			tokenOut = address;
 			buy([addresses.BUSD,tokenIn,tokenOut]);
 		}
 		
-		if(msg.includes('BUSD')){
+		if(shouldBuy && msg.includes('BUSD')){
 			console.log(address);
 			tokenOut = address;
 			buy([addresses.BUSD, tokenOut]);

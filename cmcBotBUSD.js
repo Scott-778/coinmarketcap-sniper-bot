@@ -117,7 +117,7 @@ async function onNewMessage(event) {
 			buy([addresses.BUSD,tokenIn,tokenOut]);
 		}
 		
-		if(shouldBuy && msg.includes('BUSD')){
+		else if(shouldBuy && msg.includes('BUSD')){
 			console.log(address);
 			tokenOut = address;
 			buy([addresses.BUSD, tokenOut]);

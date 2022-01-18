@@ -27,7 +27,10 @@ recipient: '' // Your wallet address
 const mnemonic = ''; // Your wallet seed phrase
 const myGasPrice = ethers.utils.parseUnits('6', 'gwei'); // Adjust your gas here, the higher the better
 const myGasLimit = 1000000; // Gas limit 
+
+const maxTax = 10; // The maximum tax for token you want to buy 
 const investmentAmount = '0.25'; // The amount you want to buy in BNB
+
 /* ----------------------------------- */
 
 const channelId = 1517585345;
@@ -89,13 +92,26 @@ async function onNewMessage(event) {
 	if(message.peerId.channelId == channelId){
 		const msg = message.message.replace(/\n/g, " ").split(" ");
 		var address = '';
+		var shouldBuy = true;
 		for (var i = 0; i < msg.length; i++){	
 			if (msg[i].length == 42 && msg[i].startsWith("0x")){
 				address = msg[i];
-			}		
+			}
+			if (msg[i] == "(buy)"){
+				var slipBuy = parseFloat(mess[i - 1]);
+				if (slipBuy > maxTax){
+					shouldBuy = false;
+				}
+			}
+			if (msg[i] == "(sell)"){
+				var slipSell = parseFloat(mess[i - 1]);
+				if (slipSell > maxTax){
+					shouldBuy = false;
+				}
+			}
 		}
 		
-		if(msg.includes('COINMARKETCAP') && msg.includes('BNB')){  // use COINGECKO for coingecko tokens
+		if(shouldBuy && msg.includes('COINMARKETCAP') && msg.includes('BNB')){  // use COINGECKO for coingecko tokens
 			console.log(address);
 			tokenOut = address;
 			buy();

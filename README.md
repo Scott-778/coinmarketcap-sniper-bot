@@ -9,4 +9,4 @@ Use at your own risk. Investing in cryptocurrency is risky not financial advice.
 If this helped you buy me a cup of coffee 0x17CCCc30297bCC1287943ea1bb549fF843878669
 
 Important! 
-If you have an issue please don't post screenshots with personal information like seed phrase, telephone number, Telegram code, Telegram two fator password, or Telegram string session. Please keep that information private!
+If you have an issue please don't post screenshots with personal information like seed phrase, telephone number, Telegram code, Telegram two factor password, or Telegram string session. Please keep that information private!

@@ -12,7 +12,7 @@ If this helped you buy me a cup of coffee 0x17CCCc30297bCC1287943ea1bb549fF84387
 const {TelegramClient } = require("telegram"); //npm install telegram
 const { StringSession } = require("telegram/sessions");
 const input = require("input"); // npm install input
-const { NewMessage } = require('telegram/events')
+const { NewMessage } = require('telegram/events');
 const ethers = require('ethers'); // npm install ethers
 
 /* ----------------------------------- */

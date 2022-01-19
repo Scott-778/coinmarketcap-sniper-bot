@@ -16,6 +16,7 @@ const { NewMessage } = require('telegram/events')
 const ethers = require('ethers'); // npm install ethers
 
 /* ----------------------------------- */
+
 const apiId = ;   
 const apiHash = ''; 
 const stringSession = new StringSession(""); // fill this later with the value from session.save()
@@ -26,10 +27,15 @@ recipient: '' // Your wallet address
 }
 const mnemonic = ''; // Your wallet seed phrase
 const myGasPrice = ethers.utils.parseUnits('6', 'gwei'); // Adjust your gas here, the higher the better
+const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
 const myGasLimit = 1000000; // Gas limit 
 
-const maxTax = 10; // The maximum tax for token you want to buy 
 const investmentAmount = '0.25'; // The amount you want to buy in BNB
+const maxTax = 10; // The maximum tax for token you want to buy 
+
+const profitXAmount = 1.50 // take 50% profit with max tax accounted for.
+const stopLossXAmount = 0.90 ; // 10% loss with max tax accounted for. 
+const autoSell = true;  // false to turn off auto sell
 
 /* ----------------------------------- */
 
@@ -48,29 +54,128 @@ pancakeAbi,
 account
 );
 
+let tokenAbi = [
+'function approve(address spender, uint amount) public returns(bool)',
+'function balanceOf(address account) external view returns (uint256)',
+'event Transfer(address indexed from, address indexed to, uint amount)'
+];
+var sellCount = 0;
+var buyCount = 0;
+
+
+
 const buy = async () =>{
-	console.log('Buying Token Now');
-	const amounts = await pancakeRouter.getAmountsOut(amountIn, [tokenIn, tokenOut]);
-	const amountOutMin = amounts[1].sub(amounts[1].div(2)); // 50% Slippage should be high enough so the transaction will not fail. 
-	//To change slippage tolerance change the last number on the line above. For example, 5 would be 20% slippage, 10 would be 10%, 2 would be 50%.  
-		
-	const tx = await pancakeRouter.swapExactETHForTokens(
-		amountOutMin,
-		[tokenIn, tokenOut],
-		addresses.recipient,
-		Math.floor(Date.now() / 1000) + 60 * 4, 
-		{
-		value: amountIn.toString(),
-		gasPrice: myGasPrice,
-		gasLimit: myGasLimit
+	if(buyCount == 0){
+		buyCount++;
+		console.log('Buying Token Now');
+		const amounts = await pancakeRouter.getAmountsOut(amountIn, [tokenIn, tokenOut]);
+		const amountOutMin = amounts[1].sub(amounts[1].div(2)); // 50% Slippage should be high enough so the transaction will not fail. 
+		//To change slippage tolerance change the last number on the line above. For example, 5 would be 20% slippage, 10 would be 10%, 2 would be 50%.  
+
+		const tx = await pancakeRouter.swapExactETHForTokens(
+			amountOutMin,
+			[tokenIn, tokenOut],
+			addresses.recipient,
+			Math.floor(Date.now() / 1000) + 60 * 4, 
+			{
+			value: amountIn.toString(),
+			gasPrice: myGasPrice,
+			gasLimit: myGasLimit
+			}
+			);
+			const receipt = await tx.wait();
+			console.log('Transaction receipt');
+			console.log(receipt);
+			approve(); 
 		}
-		);
-		const receipt = await tx.wait();
-		console.log('Transaction receipt');
-		console.log(receipt);
-		process.exit(); 
-	
 } 
+const approve = async () =>{
+
+	let contract = new ethers.Contract(tokenOut, tokenAbi, account);
+	const valueToApprove = ethers.constants.MaxUint256;
+	const tx = await contract.approve(
+		pancakeRouter.address, 
+		valueToApprove,
+		{
+          gasPrice: myGasPriceForApproval,
+          gasLimit: 210000,
+		  
+		  
+		}
+    );
+	const receipt = await tx.wait(); 
+	console.log(receipt);
+		if (autoSell){
+			checkForProfit();
+		}else{
+			process.exit();
+		}
+	
+}
+
+const checkForProfit = async() =>{
+	
+	let tokenContract = new ethers.Contract(tokenOut, tokenAbi, account);
+	const takeProfit = (profitXAmount + maxTax / 100) * 100;
+	const takeLoss = (stopLossXAmount - maxTax / 100) * 100;
+	
+	tokenContract.on("Transfer", async(from, to, value, event) => {
+		
+		let bal = await tokenContract.balanceOf(addresses.recipient);
+		const amount = await pancakeRouter.getAmountsOut(bal,[tokenOut, tokenIn]);
+		const profitDesired = amountIn.mul(takeProfit).div(100);
+		const stopLoss = amountIn.mul(takeLoss).div(100);
+		const currentValue = amount[1];
+		console.log('--- Current Value in BNB:', ethers.utils.formatUnits(currentValue),'--- Profit At:', ethers.utils.formatUnits(profitDesired), '--- Stop Loss At:', ethers.utils.formatUnits(stopLoss), '\n');
+		
+		if (currentValue.gte(profitDesired)){
+			if(sellCount == 0){
+				sellCount++;
+				console.log("Selling token profit target reached");
+				sell();
+			}
+		}
+		
+		if (currentValue.lte(stopLoss)){
+			if(sellCount == 0){
+				sellCount++;
+				console.log("Selling token now stop loss reached");
+				sell();
+			}
+		}
+	}); 
+}
+
+
+
+const sell = async () =>{
+	try{
+		console.log('selling tokens');
+		let contract = new ethers.Contract(tokenOut, tokenAbi, account);
+		let bal = await contract.balanceOf(addresses.recipient);
+		const sellAmount = await pancakeRouter.getAmountsOut(bal,[tokenOut, tokenIn]);
+		const sellAmountsOutMin = sellAmount[1].sub(sellAmount[1].div(2));
+		const tx = await pancakeRouter.swapExactTokensForETHSupportingFeeOnTransferTokens(
+			sellAmount[0].toString(),
+			sellAmountsOutMin,
+			[tokenOut, tokenIn],
+			addresses.recipient,
+			Math.floor(Date.now() / 1000) + 60 * 3, 
+			{
+				gasPrice: mygasPriceForApproval,
+				gasLimit: myGasLimit,
+				
+			}
+		);
+		const receipt = await tx.wait(); 
+		console.log(receipt);
+		process.exit();
+	}catch(e){
+		console.log(e)
+	}
+	
+			
+}
 
 (async () => {
 	const client = new TelegramClient(stringSession, apiId, apiHash, {

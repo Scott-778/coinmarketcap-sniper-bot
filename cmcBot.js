@@ -160,7 +160,7 @@ const sell = async () =>{
 		console.log(receipt);
 		process.exit();
 	}catch(e){
-		console.log(e);
+		
 	}		
 }
 

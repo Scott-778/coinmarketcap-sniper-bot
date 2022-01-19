@@ -189,6 +189,7 @@ const sell = async () =>{
   });
 	console.log("You should now be connected.");
         console.log(client.session.save()); // Save this string to avoid logging in again
+	console.log("Waiting for telegram notification to buy tokens...");
         client.addEventHandler(onNewMessage, new NewMessage({}));
 })();
 

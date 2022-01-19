@@ -62,8 +62,6 @@ let tokenAbi = [
 var sellCount = 0;
 var buyCount = 0;
 
-
-
 const buy = async () =>{
 	if(buyCount == 0){
 		buyCount++;
@@ -71,7 +69,7 @@ const buy = async () =>{
 		const amounts = await pancakeRouter.getAmountsOut(amountIn, [tokenIn, tokenOut]);
 		const amountOutMin = amounts[1].sub(amounts[1].div(2)); // 50% Slippage should be high enough so the transaction will not fail. 
 		//To change slippage tolerance change the last number on the line above. For example, 5 would be 20% slippage, 10 would be 10%, 2 would be 50%.  
-
+		
 		const tx = await pancakeRouter.swapExactETHForTokens(
 			amountOutMin,
 			[tokenIn, tokenOut],
@@ -82,52 +80,45 @@ const buy = async () =>{
 			gasPrice: myGasPrice,
 			gasLimit: myGasLimit
 			}
-			);
-			const receipt = await tx.wait();
-			console.log('Transaction receipt');
-			console.log(receipt);
-			approve(); 
-		}
+		);
+		const receipt = await tx.wait();
+		console.log('Transaction receipt');
+		console.log(receipt);
+		approve(); 
+	}
 } 
-const approve = async () =>{
 
+const approve = async () =>{
 	let contract = new ethers.Contract(tokenOut, tokenAbi, account);
 	const valueToApprove = ethers.constants.MaxUint256;
 	const tx = await contract.approve(
 		pancakeRouter.address, 
 		valueToApprove,
 		{
-          gasPrice: myGasPriceForApproval,
-          gasLimit: 210000,
-		  
-		  
+         	 gasPrice: myGasPriceForApproval,
+         	 gasLimit: 210000,
 		}
-    );
+   	 );
 	const receipt = await tx.wait(); 
 	console.log(receipt);
-		if (autoSell){
-			checkForProfit();
-		}else{
-			process.exit();
-		}
-	
+	if (autoSell){
+		checkForProfit();
+	}else{
+		process.exit();
+	}	
 }
 
 const checkForProfit = async() =>{
-	
 	let tokenContract = new ethers.Contract(tokenOut, tokenAbi, account);
 	const takeProfit = (profitXAmount + maxTax / 100) * 100;
 	const takeLoss = (stopLossXAmount - maxTax / 100) * 100;
-	
 	tokenContract.on("Transfer", async(from, to, value, event) => {
-		
 		let bal = await tokenContract.balanceOf(addresses.recipient);
 		const amount = await pancakeRouter.getAmountsOut(bal,[tokenOut, tokenIn]);
 		const profitDesired = amountIn.mul(takeProfit).div(100);
 		const stopLoss = amountIn.mul(takeLoss).div(100);
 		const currentValue = amount[1];
 		console.log('--- Current Value in BNB:', ethers.utils.formatUnits(currentValue),'--- Profit At:', ethers.utils.formatUnits(profitDesired), '--- Stop Loss At:', ethers.utils.formatUnits(stopLoss), '\n');
-		
 		if (currentValue.gte(profitDesired)){
 			if(sellCount == 0){
 				sellCount++;
@@ -135,7 +126,6 @@ const checkForProfit = async() =>{
 				sell();
 			}
 		}
-		
 		if (currentValue.lte(stopLoss)){
 			if(sellCount == 0){
 				sellCount++;
@@ -162,9 +152,8 @@ const sell = async () =>{
 			addresses.recipient,
 			Math.floor(Date.now() / 1000) + 60 * 3, 
 			{
-				gasPrice: mygasPriceForApproval,
-				gasLimit: myGasLimit,
-				
+			gasPrice: mygasPriceForApproval,
+			gasLimit: myGasLimit,
 			}
 		);
 		const receipt = await tx.wait(); 
@@ -172,9 +161,7 @@ const sell = async () =>{
 		process.exit();
 	}catch(e){
 		console.log(e)
-	}
-	
-			
+	}		
 }
 
 (async () => {
@@ -216,7 +203,6 @@ async function onNewMessage(event) {
 				}
 			}
 		}
-		
 		if(shouldBuy && msg.includes('COINMARKETCAP') && msg.includes('BNB')){  // use COINGECKO for coingecko tokens
 			console.log(address);
 			tokenOut = address;

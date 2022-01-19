@@ -12,14 +12,14 @@ Important!
 If you have an issue please don't post screenshots with personal information like seed phrase, telephone number, Telegram code, Telegram two factor password, or Telegram string session. Please keep that information private!
 
 To run the bot open the Command Prompt and go to where cmcBot.js is located on your computer with the change directory command 
-`cd C:\Path of where cmcBot.js is located`
+```cd C:\Path of where cmcBot.js is located```
 
 Then install all the modules with npm
 
-`npm install ethers`
-`npm install telegram`
-`npm install input`
+```npm install ethers```
+```npm install telegram```
+```npm install input```
 
 Then run the bot
 
-`node cmcBot.js`
+```node cmcBot.js```

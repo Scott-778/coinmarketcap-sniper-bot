@@ -152,7 +152,7 @@ const sell = async () =>{
 			addresses.recipient,
 			Math.floor(Date.now() / 1000) + 60 * 3, 
 			{
-			gasPrice: mygasPriceForApproval,
+			gasPrice: myGasPriceForApproval,
 			gasLimit: myGasLimit,
 			}
 		);
@@ -191,13 +191,13 @@ async function onNewMessage(event) {
 				address = msg[i];
 			}
 			if (msg[i] == "(buy)"){
-				const slipBuy = parseInt(mess[i - 1]);
+				const slipBuy = parseInt(msg[i - 1]);
 				if (slipBuy > maxTax){
 					shouldBuy = false;
 				}
 			}
 			if (msg[i] == "(sell)"){
-				const slipSell = parseInt(mess[i - 1]);
+				const slipSell = parseInt(msg[i - 1]);
 				if (slipSell > maxTax){
 					shouldBuy = false;
 				}

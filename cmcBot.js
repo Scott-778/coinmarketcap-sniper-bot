@@ -33,7 +33,7 @@ const myGasLimit = 1000000; // Gas limit
 const investmentAmount = '0.25'; // The amount you want to buy in BNB
 const maxTax = 10; // The maximum tax for token you want to buy 
 
-const profitXAmount = 1.77; // 77% profit with max tax accounted for.
+const profitXAmount = 1.50; // 50% profit with max tax accounted for. 2.00 would be 100% profit, 1.6 or 60% gives error don't use 60% 
 const stopLossXAmount = 0.90; // 10% loss with max tax accounted for. 
 const autoSell = true;  // false to turn off auto sell
 

@@ -37,6 +37,9 @@ const profitXAmount = 1.50; // 50% profit with max tax accounted for. 2.00 would
 const stopLossXAmount = 0.90; // 10% loss with max tax accounted for. 
 const autoSell = true;  // false to turn off auto sell
 
+const maxLiquidity = 120; // in BNB
+const minLiquidity = 30; // in BNB
+
 /* ----------------------------------- */
 
 const channelId = 1517585345;
@@ -202,6 +205,15 @@ async function onNewMessage(event) {
 					shouldBuy = false;
 				}
 			}
+			if (msg[i] == "BNB"){
+				const liquidity = parseFloat(msg[i - 1]);
+				if (liquidity > maxLiquidity ){
+					shouldBuy = false;
+				}
+				if(liquidity < minLiquidity){
+					shouldBuy = false;
+				}
+			} 
 		}
 		if(shouldBuy && msg.includes('COINMARKETCAP') && msg.includes('BNB')){  // use COINGECKO for coingecko tokens
 			console.log(address);

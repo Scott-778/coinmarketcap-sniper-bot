@@ -133,7 +133,7 @@ async function checkForProfit() {
         if (currentValue.gte(profitDesired)) {
             if (buyCount <= numberOfTokensToBuy && !token[tokenIndex].didSell && token[tokenIndex].didBuy && sellAttempts == 0) {
                 sellAttempts++;
-                console.log("Selling", tokenName, "now stoploss reached", "\n");
+                console.log("Selling", tokenName, "now profit target reached", "\n");
                 sell(tokenObj);
                 tokenContract.removeAllListeners();
             }
@@ -142,7 +142,7 @@ async function checkForProfit() {
         if (currentValue.lte(stopLoss)) {
             if (buyCount <= numberOfTokensToBuy && !token[tokenIndex].didSell && token[tokenIndex].didBuy && sellAttempts == 0) {
                 sellAttempts++;
-                console.log("Selling", tokenName, "now stoploss reached", "\n");
+                console.log("Selling", tokenName, "now stop loss reached", "\n");
                 sell(tokenObj);
                 tokenContract.removeAllListeners();
 

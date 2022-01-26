@@ -39,7 +39,7 @@ const profitXAmount = 1.9; // take 90% profit with max tax accounted for.
 const stopLossXAmount = 0.90; // 10% loss with max tax accounted for. 
 const autoSell = true; // false to turn off auto sell
 
-const numberOfTokensToBuy = 1;
+const numberOfTokensToBuy = 2;
 const strategy = 'COINMARKETCAP'; // Only buys coinmarketcap coins. if stratgey = 'COINGECKO' it will only buy coingecko coins 
 
 const apiId = 111111; // Replace with your own api id 

@@ -31,7 +31,7 @@ const myGasLimit = 1000000;
 const myGasPrice = ethers.utils.parseUnits('6', 'gwei');
 const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
 
-const maxTax = 10; // 10%
+const maxTax = 11; // 10%
 const maxLiquidity = 500;
 const minLiquidity = 30;
 

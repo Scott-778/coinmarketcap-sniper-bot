@@ -108,7 +108,9 @@ async function approve() {
     if (autoSell) {
         checkForProfit();
     } else {
-        process.exit();
+        if(buyCount == numberOfTokensToBuy){
+            process.exit();
+        }
     }
 
 }

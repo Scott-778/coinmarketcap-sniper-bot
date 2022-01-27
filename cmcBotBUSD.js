@@ -111,14 +111,14 @@ const approve = async (path) =>{
 
 const checkForProfit = async(path) =>{
 	let tokenContract = new ethers.Contract(tokenOut, tokenAbi, account);
-	const takeProfit = (profitXAmount + maxTax / 100) * 100;
-	const takeLoss = (stopLossXAmount - maxTax / 100) * 100;
+	const takeLoss = (parseFloat(investmentAmount) * (stopLossXAmount - maxTax / 100)).toFixed(18).toString();
+    	const takeProfit = (parseFloat(investmentAmount) * (profitXAmount + maxTax / 100)).toFixed(18).toString();
 	const rPath = path.reverse();
 	tokenContract.on("Transfer", async(from, to, value, event) => {
 		let bal = await tokenContract.balanceOf(addresses.recipient);
 		const amount = await pancakeRouter.getAmountsOut(bal,rPath);
-		const profitDesired = amountIn.mul(takeProfit).div(100);
-		const stopLoss = amountIn.mul(takeLoss).div(100);
+		const profitDesired = ethers.utils.parseUnits(takeProfit);
+        	const stopLoss = ethers.utils.parseUnits(takeLoss);
 		let currentValue;
 		if(path.length == 3){
 			currentValue = amount[2];

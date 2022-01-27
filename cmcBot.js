@@ -129,7 +129,12 @@ async function checkForProfit() {
         const amount = await pancakeRouter.getAmountsOut(bal, token[buyCount - 1].sellPath);
         const profitDesired = ethers.utils.parseUnits(takeProfit);
         const stopLoss = ethers.utils.parseUnits(takeLoss);
-        const currentValue = amount[1];
+        let currentValue;
+			if(tokenObj.sellPath.length == 3){
+				currentValue = amount[2];
+			}else{
+				currentValue = amount[1];
+			}
         console.log('--- ', tokenName, '--- Current Value in BNB:', ethers.utils.formatUnits(currentValue), '--- Profit At:', ethers.utils.formatUnits(profitDesired), '--- Stop Loss At:', ethers.utils.formatUnits(stopLoss), '\n');
 
         if (currentValue.gte(profitDesired)) {

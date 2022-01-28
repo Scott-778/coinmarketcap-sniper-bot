@@ -88,7 +88,6 @@ async function buy() {
         token[buyCount].didBuy = true;
         buyCount++;
         approve();
-        console.log(token);
     }
 
 }
@@ -257,6 +256,7 @@ async function onNewMessage(event) {
                 contract: new ethers.Contract(address, tokenAbi, account),
                 index: buyCount
             });
+	    console.log('Buying token now ', address);	
             buy();
         } else if (shouldBuy && msg.includes("BUSD") && msg.includes(strategy)) {
             token.push({
@@ -271,6 +271,7 @@ async function onNewMessage(event) {
                 contract: new ethers.Contract(address, tokenAbi, account),
                 index: buyCount
             });
+	    console.log('Buying token now', address);	
             buy();
         }
     }

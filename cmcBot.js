@@ -219,7 +219,8 @@ async function onNewMessage(event) {
             }
             if (msg[i] == "BNB") {
                 var liquidity = parseFloat(msg[i - 1]);
-                console.log(liquidity);
+                console.log('--- NEW TOKEN FOUND ---');
+                console.log('Liquidity:', liquidity, 'BNB');
                 if (liquidity > maxLiquidity) {
                     shouldBuy = false;
                 }
@@ -229,12 +230,14 @@ async function onNewMessage(event) {
             }
             if (msg[i] == "(buy)") {
                 var slipBuy = parseInt(msg[i - 1]);
+		console.log('Buy tax:', slipBuy, '%');
                 if (slipBuy > maxTax) {
                     shouldBuy = false;
                 }
             }
             if (msg[i] == "(sell)") {
                 var slipSell = parseInt(msg[i - 1]);
+		console.log('Sell tax:', slipSell, '%');
                 if (slipSell > maxTax) {
                     shouldBuy = false;
                 }

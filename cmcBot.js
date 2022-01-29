@@ -31,9 +31,20 @@ const myGasLimit = 1000000;
 const myGasPrice = ethers.utils.parseUnits('6', 'gwei');
 const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
 
-const maxTax = 10; // 10%
-const maxLiquidity = 500;
-const minLiquidity = 30;
+/* Strategy for buying low-liquid tokens */
+const maxTaxLL = 20; // max Slippage %
+const maxLiquidityLL = 80; // max Liquidity BNB
+const minLiquidityLL = 10; // min Liquidity BNB
+
+/* Buying strategy tokens with medium liquidity */
+const maxTaxML = 10; // max Slippage %
+const maxLiquidityML = 150; // max Liquidity BNB
+const minLiquidityML = 80;  // min Liquidity BNB
+
+/* The strategy of buying tokens with high liquidity */
+const maxTaxHL = 5; // max Slippage %
+const maxLiquidityHL = 500; // max Liquidity BNB
+const minLiquidityHL = 150;  // min Liquidity BNB
 
 const profitXAmount = 1.9; // take 90% profit with max tax accounted for.
 const stopLossXAmount = 0.90; // 10% loss with max tax accounted for. 
@@ -215,35 +226,41 @@ async function onNewMessage(event) {
         for (var i = 0; i < msg.length; i++) {
             if (msg[i].length == 42 && msg[i].startsWith("0x")) {
                 address = msg[i];
-            }
+            	}
             if (msg[i] == "BNB") {
                 var liquidity = parseFloat(msg[i - 1]);
                 console.log('--- NEW TOKEN FOUND ---');
                 console.log('Liquidity:', liquidity, 'BNB');
-                if (liquidity > maxLiquidity) {
-                    shouldBuy = false;
                 }
-                if (liquidity < minLiquidity) {
-                    shouldBuy = false;
-                }
-            }
             if (msg[i] == "(buy)") {
                 var slipBuy = parseInt(msg[i - 1]);
 		console.log('Buy tax:', slipBuy, '%');
-                if (slipBuy > maxTax) {
-                    shouldBuy = false;
                 }
-            }
             if (msg[i] == "(sell)") {
                 var slipSell = parseInt(msg[i - 1]);
 		console.log('Sell tax:', slipSell, '%');
-                if (slipSell > maxTax) {
-                    shouldBuy = false;
                 }
             }
-        }
+	    
+	const StrategyLL = // Strategy for buying low-liquid tokens
+        liquidity < maxLiquidityLL &&
+        liquidity > minLiquidityLL &&
+        slipBuy < maxTaxLL &&
+        slipSell < maxTaxLL;
 
-        if (shouldBuy && msg.includes("BNB") && msg.includes(strategy)) {
+        const StrategyML = // Buying strategy tokens with medium liquidity
+        liquidity < maxLiquidityML &&
+        liquidity > minLiquidityML &&
+        slipBuy < maxTaxML &&
+        slipSell < maxTaxML;
+
+        const StrategyHL = // The strategy of buying tokens with high liquidity
+        liquidity < maxLiquidityHL &&
+        liquidity > minLiquidityHL &&
+        slipBuy < maxTaxHL &&
+        slipSell < maxTaxHL;
+        
+        if (shouldBuy && msg.includes("BNB") && msg.includes(strategy) && StrategyLL || StrategyML || StrategyHL) {
             token.push({
                 tokenAddress: address,
                 didBuy: false,

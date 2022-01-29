@@ -115,25 +115,25 @@ async function approve() {
 }
 
 async function checkForProfit() {
-    const tokenContract = token[buyCount - 1].contract;
-    const tokenObj = token[buyCount - 1];
-    const tokenIndex = token[buyCount - 1].index;
-    const takeLoss = (parseFloat(investmentAmount) * (stopLossXAmount - token[buyCount - 1].tokenSellTax / 100)).toFixed(18).toString();
-    const takeProfit = (parseFloat(investmentAmount) * (profitXAmount + token[buyCount - 1].tokenSellTax / 100)).toFixed(18).toString();
-    const tokenName = await tokenContract.name();
-    var sellAttempts = 0;
-
-    tokenContract.on("Transfer", async (from, to, value, event) => {
+	const tokenContract = token[buyCount - 1].contract;
+	const tokenObj = token[buyCount - 1];
+        const tokenIndex = token[buyCount - 1].index;
+        const takeLoss = (parseFloat(investmentAmount) * (stopLossXAmount - token[buyCount - 1].tokenSellTax / 100)).toFixed(18).toString();
+        const takeProfit = (parseFloat(investmentAmount) * (profitXAmount + token[buyCount - 1].tokenSellTax / 100)).toFixed(18).toString();
+        const tokenName = await tokenContract.name();
+        var sellAttempts = 0;
         let bal = await tokenContract.balanceOf(addresses.recipient);
         const amount = await pancakeRouter.getAmountsOut(bal, token[buyCount - 1].sellPath);
         const profitDesired = ethers.utils.parseUnits(takeProfit);
         const stopLoss = ethers.utils.parseUnits(takeLoss);
         let currentValue;
-			if(tokenObj.sellPath.length == 3){
-				currentValue = amount[2];
-			}else{
-				currentValue = amount[1];
-			}
+	if(tokenObj.sellPath.length == 3){
+		currentValue = amount[2];
+	}else{
+		currentValue = amount[1];
+	}
+    token[buyCount - 1].contract.on("Transfer", async (from, to, value, event) => {
+        
         console.log('--- ', tokenName, '--- Current Value in BNB:', ethers.utils.formatUnits(currentValue), '--- Profit At:', ethers.utils.formatUnits(profitDesired), '--- Stop Loss At:', ethers.utils.formatUnits(stopLoss), '\n');
 
         if (currentValue.gte(profitDesired)) {

@@ -177,7 +177,7 @@ async function sell(tokenObj) {
         const receipt = await tx.wait();
         console.log(receipt);
         sellCount++;
-        token[buyCount].didSell = true;
+        token[tokenObj.index].didSell = true;
 
         if (sellCount == numberOfTokensToBuy) {
             console.log("All tokens sold");

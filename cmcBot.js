@@ -13,42 +13,47 @@ const { StringSession } = require("telegram/sessions");
 const input = require("input");
 const { NewMessage } = require('telegram/events');
 const ethers = require('ethers');
+const env = require("dotenv");
+const result = env.config()
+if (result.error) {
+    throw result.error
+}
 
 const addresses = {
     WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
     pancakeRouter: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
     BUSD: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
 
-    recipient: '' // Your wallet address here
+    recipient: process.env.RECIPIENT // Your wallet address here
 }
 
 /*-----------Settings-----------*/
 
-const investmentAmount = '0.1'; // investment amount per token
-const mnemonic = ''; // Wallet seed phrase
+const investmentAmount = process.env.INVESTMENT_AMOUNT; // investment amount per token
+const mnemonic = process.env.MNEMONIC; // Wallet seed phrase
 
-const myGasLimit = 1000000;
-const myGasPrice = ethers.utils.parseUnits('6', 'gwei');
-const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
+const myGasLimit = process.env.GAS_LIMIT;
+const myGasPrice = ethers.utils.parseUnits(process.env.GAS_PRICE, 'gwei');
+const myGasPriceForApproval = ethers.utils.parseUnits(process.env.GAS_PRICE, 'gwei');
 
-const maxTax = 10; // 10%
-const maxLiquidity = 500;
-const minLiquidity = 30;
+const maxTax = process.env.MAX_TAX; // 10%
+const maxLiquidity = process.env.MAX_LIQUIDITY;
+const minLiquidity = process.env.MIN_LIQUIDITY;
 
-const profitXAmount = 1.9; // take 90% profit with max tax accounted for.
-const stopLossXAmount = 0.90; // 10% loss with max tax accounted for. 
-const autoSell = true; // false to turn off auto sell
+const profitXAmount = process.env.PROFIT_X_AMOUNT; // take 90% profit with max tax accounted for.
+const stopLossXAmount = process.env.STOPLOSS_X_AMOUNT; // 10% loss with max tax accounted for. 
+const autoSell = process.env.AUTO_SELL; // false to turn off auto sell
 
-const numberOfTokensToBuy = 2; 
-const strategy = 'COINMARKETCAP'; // Only buys coinmarketcap coins. if stratgey = 'COINGECKO' it will only buy coingecko coins 
+const numberOfTokensToBuy = process.env.NUMBER_OF_TOKENS_TO_BUY;
+const strategy = process.env.STRATEGY; // Only buys coinmarketcap coins. if stratgey = 'COINGECKO' it will only buy coingecko coins 
 
-const apiId = 111111; // Replace with your own api id 
-const apiHash = '';
-const stringSession = new StringSession(""); // fill this later with the value from long string on command prompt to avoid logging in again
+const apiId = process.env.APP_ID; // Replace with your own api id 
+const apiHash = process.env.APP_HASH;
+const stringSession = new StringSession(process.env.STRING_SESSION); // fill this later with the value from long string on command prompt to avoid logging in again
 
 /*-----------End Settings-----------*/
 
-const node = 'https://bsc-dataseed.binance.org/';
+const node = process.env.BSC_NODE;
 const wallet = new ethers.Wallet.fromMnemonic(mnemonic);
 const channelId = 1517585345;
 let tokenIn = addresses.WBNB;
@@ -56,7 +61,7 @@ let token = [];
 const amountIn = ethers.utils.parseUnits(investmentAmount, 'ether');
 const value = amountIn.toString();
 const amountOutMin = ethers.utils.parseUnits('0', '0');
-let pancakeAbi = [{"inputs":[{"internalType":"address","name":"_factory","type":"address"},{"internalType":"address","name":"_WETH","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"WETH","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"amountADesired","type":"uint256"},{"internalType":"uint256","name":"amountBDesired","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"amountTokenDesired","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"addLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"},{"internalType":"uint256","name":"liquidity","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountIn","outputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"reserveIn","type":"uint256"},{"internalType":"uint256","name":"reserveOut","type":"uint256"}],"name":"getAmountOut","outputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsIn","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"}],"name":"getAmountsOut","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"reserveA","type":"uint256"},{"internalType":"uint256","name":"reserveB","type":"uint256"}],"name":"quote","outputs":[{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidity","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETH","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"removeLiquidityETHSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermit","outputs":[{"internalType":"uint256","name":"amountToken","type":"uint256"},{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"token","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountTokenMin","type":"uint256"},{"internalType":"uint256","name":"amountETHMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityETHWithPermitSupportingFeeOnTransferTokens","outputs":[{"internalType":"uint256","name":"amountETH","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"tokenA","type":"address"},{"internalType":"address","name":"tokenB","type":"address"},{"internalType":"uint256","name":"liquidity","type":"uint256"},{"internalType":"uint256","name":"amountAMin","type":"uint256"},{"internalType":"uint256","name":"amountBMin","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bool","name":"approveMax","type":"bool"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"removeLiquidityWithPermit","outputs":[{"internalType":"uint256","name":"amountA","type":"uint256"},{"internalType":"uint256","name":"amountB","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapETHForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactETHForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForETHSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountIn","type":"uint256"},{"internalType":"uint256","name":"amountOutMin","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapExactTokensForTokensSupportingFeeOnTransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactETH","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amountOut","type":"uint256"},{"internalType":"uint256","name":"amountInMax","type":"uint256"},{"internalType":"address[]","name":"path","type":"address[]"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"deadline","type":"uint256"}],"name":"swapTokensForExactTokens","outputs":[{"internalType":"uint256[]","name":"amounts","type":"uint256[]"}],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}];
+let pancakeAbi = [{ "inputs": [{ "internalType": "address", "name": "_factory", "type": "address" }, { "internalType": "address", "name": "_WETH", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [], "name": "WETH", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "tokenA", "type": "address" }, { "internalType": "address", "name": "tokenB", "type": "address" }, { "internalType": "uint256", "name": "amountADesired", "type": "uint256" }, { "internalType": "uint256", "name": "amountBDesired", "type": "uint256" }, { "internalType": "uint256", "name": "amountAMin", "type": "uint256" }, { "internalType": "uint256", "name": "amountBMin", "type": "uint256" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "addLiquidity", "outputs": [{ "internalType": "uint256", "name": "amountA", "type": "uint256" }, { "internalType": "uint256", "name": "amountB", "type": "uint256" }, { "internalType": "uint256", "name": "liquidity", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "amountTokenDesired", "type": "uint256" }, { "internalType": "uint256", "name": "amountTokenMin", "type": "uint256" }, { "internalType": "uint256", "name": "amountETHMin", "type": "uint256" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "addLiquidityETH", "outputs": [{ "internalType": "uint256", "name": "amountToken", "type": "uint256" }, { "internalType": "uint256", "name": "amountETH", "type": "uint256" }, { "internalType": "uint256", "name": "liquidity", "type": "uint256" }], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "factory", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }, { "internalType": "uint256", "name": "reserveIn", "type": "uint256" }, { "internalType": "uint256", "name": "reserveOut", "type": "uint256" }], "name": "getAmountIn", "outputs": [{ "internalType": "uint256", "name": "amountIn", "type": "uint256" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "uint256", "name": "reserveIn", "type": "uint256" }, { "internalType": "uint256", "name": "reserveOut", "type": "uint256" }], "name": "getAmountOut", "outputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }, { "internalType": "address[]", "name": "path", "type": "address[]" }], "name": "getAmountsIn", "outputs": [{ "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "address[]", "name": "path", "type": "address[]" }], "name": "getAmountsOut", "outputs": [{ "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountA", "type": "uint256" }, { "internalType": "uint256", "name": "reserveA", "type": "uint256" }, { "internalType": "uint256", "name": "reserveB", "type": "uint256" }], "name": "quote", "outputs": [{ "internalType": "uint256", "name": "amountB", "type": "uint256" }], "stateMutability": "pure", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "tokenA", "type": "address" }, { "internalType": "address", "name": "tokenB", "type": "address" }, { "internalType": "uint256", "name": "liquidity", "type": "uint256" }, { "internalType": "uint256", "name": "amountAMin", "type": "uint256" }, { "internalType": "uint256", "name": "amountBMin", "type": "uint256" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "removeLiquidity", "outputs": [{ "internalType": "uint256", "name": "amountA", "type": "uint256" }, { "internalType": "uint256", "name": "amountB", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "liquidity", "type": "uint256" }, { "internalType": "uint256", "name": "amountTokenMin", "type": "uint256" }, { "internalType": "uint256", "name": "amountETHMin", "type": "uint256" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "removeLiquidityETH", "outputs": [{ "internalType": "uint256", "name": "amountToken", "type": "uint256" }, { "internalType": "uint256", "name": "amountETH", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "liquidity", "type": "uint256" }, { "internalType": "uint256", "name": "amountTokenMin", "type": "uint256" }, { "internalType": "uint256", "name": "amountETHMin", "type": "uint256" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "removeLiquidityETHSupportingFeeOnTransferTokens", "outputs": [{ "internalType": "uint256", "name": "amountETH", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "liquidity", "type": "uint256" }, { "internalType": "uint256", "name": "amountTokenMin", "type": "uint256" }, { "internalType": "uint256", "name": "amountETHMin", "type": "uint256" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }, { "internalType": "bool", "name": "approveMax", "type": "bool" }, { "internalType": "uint8", "name": "v", "type": "uint8" }, { "internalType": "bytes32", "name": "r", "type": "bytes32" }, { "internalType": "bytes32", "name": "s", "type": "bytes32" }], "name": "removeLiquidityETHWithPermit", "outputs": [{ "internalType": "uint256", "name": "amountToken", "type": "uint256" }, { "internalType": "uint256", "name": "amountETH", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "token", "type": "address" }, { "internalType": "uint256", "name": "liquidity", "type": "uint256" }, { "internalType": "uint256", "name": "amountTokenMin", "type": "uint256" }, { "internalType": "uint256", "name": "amountETHMin", "type": "uint256" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }, { "internalType": "bool", "name": "approveMax", "type": "bool" }, { "internalType": "uint8", "name": "v", "type": "uint8" }, { "internalType": "bytes32", "name": "r", "type": "bytes32" }, { "internalType": "bytes32", "name": "s", "type": "bytes32" }], "name": "removeLiquidityETHWithPermitSupportingFeeOnTransferTokens", "outputs": [{ "internalType": "uint256", "name": "amountETH", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "tokenA", "type": "address" }, { "internalType": "address", "name": "tokenB", "type": "address" }, { "internalType": "uint256", "name": "liquidity", "type": "uint256" }, { "internalType": "uint256", "name": "amountAMin", "type": "uint256" }, { "internalType": "uint256", "name": "amountBMin", "type": "uint256" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }, { "internalType": "bool", "name": "approveMax", "type": "bool" }, { "internalType": "uint8", "name": "v", "type": "uint8" }, { "internalType": "bytes32", "name": "r", "type": "bytes32" }, { "internalType": "bytes32", "name": "s", "type": "bytes32" }], "name": "removeLiquidityWithPermit", "outputs": [{ "internalType": "uint256", "name": "amountA", "type": "uint256" }, { "internalType": "uint256", "name": "amountB", "type": "uint256" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }, { "internalType": "address[]", "name": "path", "type": "address[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "swapETHForExactTokens", "outputs": [{ "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }, { "internalType": "address[]", "name": "path", "type": "address[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "swapExactETHForTokens", "outputs": [{ "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" }], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }, { "internalType": "address[]", "name": "path", "type": "address[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "swapExactETHForTokensSupportingFeeOnTransferTokens", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }, { "internalType": "address[]", "name": "path", "type": "address[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "swapExactTokensForETH", "outputs": [{ "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }, { "internalType": "address[]", "name": "path", "type": "address[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "swapExactTokensForETHSupportingFeeOnTransferTokens", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }, { "internalType": "address[]", "name": "path", "type": "address[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "swapExactTokensForTokens", "outputs": [{ "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountIn", "type": "uint256" }, { "internalType": "uint256", "name": "amountOutMin", "type": "uint256" }, { "internalType": "address[]", "name": "path", "type": "address[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "swapExactTokensForTokensSupportingFeeOnTransferTokens", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }, { "internalType": "uint256", "name": "amountInMax", "type": "uint256" }, { "internalType": "address[]", "name": "path", "type": "address[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "swapTokensForExactETH", "outputs": [{ "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amountOut", "type": "uint256" }, { "internalType": "uint256", "name": "amountInMax", "type": "uint256" }, { "internalType": "address[]", "name": "path", "type": "address[]" }, { "internalType": "address", "name": "to", "type": "address" }, { "internalType": "uint256", "name": "deadline", "type": "uint256" }], "name": "swapTokensForExactTokens", "outputs": [{ "internalType": "uint256[]", "name": "amounts", "type": "uint256[]" }], "stateMutability": "nonpayable", "type": "function" }, { "stateMutability": "payable", "type": "receive" }];
 const provider = new ethers.providers.JsonRpcProvider(node);
 const account = wallet.connect(provider);
 const pancakeRouter = new ethers.Contract(addresses.pancakeRouter, pancakeAbi, account);
@@ -70,17 +75,17 @@ var sellCount = 0;
 var buyCount = 0;
 
 async function buy() {
-    if(buyCount < numberOfTokensToBuy) {
+    if (buyCount < numberOfTokensToBuy) {
         const tx = await pancakeRouter.swapExactETHForTokens(
             amountOutMin,
             token[buyCount].buyPath,
             addresses.recipient,
             Math.floor(Date.now() / 1000) + 60 * 4, {
-                value: value,
-                gasPrice: myGasPrice,
-                gasLimit: myGasLimit
+            value: value,
+            gasPrice: myGasPrice,
+            gasLimit: myGasLimit
 
-            }
+        }
         );
         const receipt = await tx.wait();
         console.log(receipt);
@@ -97,16 +102,16 @@ async function approve() {
     const tx = await contract.approve(
         pancakeRouter.address,
         valueToApprove, {
-            gasPrice: myGasPriceForApproval,
-            gasLimit: 210000
-        }
+        gasPrice: myGasPriceForApproval,
+        gasLimit: 210000
+    }
     );
     const receipt = await tx.wait();
     console.log(receipt);
-    if(autoSell) {
-        token[buycount - 1].checkProfit();
+    if (autoSell) {
+        token[buyCount - 1].checkProfit();
     } else {
-        if(buyCount == numberOfTokensToBuy){
+        if (buyCount == numberOfTokensToBuy) {
             process.exit();
         }
     }
@@ -114,42 +119,42 @@ async function approve() {
 }
 
 async function checkForProfit(token) {
-	var sellAttempts = 0;
-	token.contract.on("Transfer", async(from, to, value, event) => {
-		const takeLoss = (parseFloat(investmentAmount) * (stopLossXAmount - token.tokenSellTax / 100 )).toFixed(18).toString();
-        	const takeProfit = (parseFloat(investmentAmount) * (profitXAmount + token.tokenSellTax / 100 )).toFixed(18).toString();
-		const tokenName = await token.contract.name();
-		let bal = await token.contract.balanceOf(addresses.recipient);
-		const amount = await pancakeRouter.getAmountsOut(bal,token.sellPath);
-		const profitDesired = ethers.utils.parseUnits(takeProfit);
-		const stopLoss = ethers.utils.parseUnits(takeLoss);
-		let currentValue;
-		if(token.sellPath.length == 3){
-			currentValue = amount[2];
-		}else{
-			currentValue = amount[1];
-		}
-		console.log('--- ', tokenName ,'--- Current Value in BNB:', ethers.utils.formatUnits(currentValue),'--- Profit At:', ethers.utils.formatUnits(profitDesired), '--- Stop Loss At:', ethers.utils.formatUnits(stopLoss), '\n');
+    var sellAttempts = 0;
+    token.contract.on("Transfer", async (from, to, value, event) => {
+        const takeLoss = (parseFloat(investmentAmount) * (stopLossXAmount - token.tokenSellTax / 100)).toFixed(18).toString();
+        const takeProfit = (parseFloat(investmentAmount) * (profitXAmount + token.tokenSellTax / 100)).toFixed(18).toString();
+        const tokenName = await token.contract.name();
+        let bal = await token.contract.balanceOf(addresses.recipient);
+        const amount = await pancakeRouter.getAmountsOut(bal, token.sellPath);
+        const profitDesired = ethers.utils.parseUnits(takeProfit);
+        const stopLoss = ethers.utils.parseUnits(takeLoss);
+        let currentValue;
+        if (token.sellPath.length == 3) {
+            currentValue = amount[2];
+        } else {
+            currentValue = amount[1];
+        }
+        console.log('--- ', tokenName, '--- Current Value in BNB:', ethers.utils.formatUnits(currentValue), '--- Profit At:', ethers.utils.formatUnits(profitDesired), '--- Stop Loss At:', ethers.utils.formatUnits(stopLoss), '\n');
 
-		if(currentValue.gte(profitDesired)){
-			if(buyCount <= numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0){
-				sellAttempts++;
-				console.log("Selling", tokenName , "now profit target reached", "\n");
-				sell(token);
-				token.contract.removeAllListeners();
-			} 
-		}
+        if (currentValue.gte(profitDesired)) {
+            if (buyCount <= numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
+                sellAttempts++;
+                console.log("Selling", tokenName, "now profit target reached", "\n");
+                sell(token);
+                token.contract.removeAllListeners();
+            }
+        }
 
-		if(currentValue.lte(stopLoss)){
+        if (currentValue.lte(stopLoss)) {
 
-			if(buyCount <= numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0){
-				sellAttempts++;
-				console.log("Selling", tokenName , "now stoploss reached", "\n");
-				sell(token);
-				token.contract.removeAllListeners();
-			} 
-		}
-	});	
+            if (buyCount <= numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
+                sellAttempts++;
+                console.log("Selling", tokenName, "now stoploss reached", "\n");
+                sell(token);
+                token.contract.removeAllListeners();
+            }
+        }
+    });
 }
 
 async function sell(tokenObj) {
@@ -163,17 +168,17 @@ async function sell(tokenObj) {
             tokenObj.sellPath,
             addresses.recipient,
             Math.floor(Date.now() / 1000) + 60 * 3, {
-                gasPrice: myGasPriceForApproval,
-                gasLimit: myGasLimit,
+            gasPrice: myGasPriceForApproval,
+            gasLimit: myGasLimit,
 
-            }
+        }
         );
         const receipt = await tx.wait();
         console.log(receipt);
         sellCount++;
         token[tokenObj.index].didSell = true;
 
-        if(sellCount == numberOfTokensToBuy) {
+        if (sellCount == numberOfTokensToBuy) {
             console.log("All tokens sold");
             process.exit();
         }
@@ -202,74 +207,74 @@ async function sell(tokenObj) {
 
 async function onNewMessage(event) {
     const message = event.message;
-    if(message.peerId.channelId == channelId) {
+    if (message.peerId.channelId == channelId) {
         const msg = message.message.replace(/\n/g, " ").split(" ");
         var address = '';
         var shouldBuy = true;
         for (var i = 0; i < msg.length; i++) {
-            if(ethers.utils.isAddress(msg[i])) {
+            if (ethers.utils.isAddress(msg[i])) {
                 address = msg[i];
             }
-            if(msg[i] == "BNB") {
+            if (msg[i] == "BNB") {
                 var liquidity = parseFloat(msg[i - 1]);
                 console.log('--- NEW TOKEN FOUND ---');
                 console.log('Liquidity:', liquidity, 'BNB');
-                if(liquidity > maxLiquidity) {
+                if (liquidity > maxLiquidity) {
                     shouldBuy = false;
                 }
-                if(liquidity < minLiquidity) {
+                if (liquidity < minLiquidity) {
                     shouldBuy = false;
                 }
             }
-            if(msg[i] == "(buy)") {
+            if (msg[i] == "(buy)") {
                 var slipBuy = parseInt(msg[i - 1]);
-		console.log('Buy tax:', slipBuy, '%');
-                if(slipBuy > maxTax) {
+                console.log('Buy tax:', slipBuy, '%');
+                if (slipBuy > maxTax) {
                     shouldBuy = false;
                 }
             }
-            if(msg[i] == "(sell)") {
+            if (msg[i] == "(sell)") {
                 var slipSell = parseInt(msg[i - 1]);
-		console.log('Sell tax:', slipSell, '%');
-                if(slipSell > maxTax) {
+                console.log('Sell tax:', slipSell, '%');
+                if (slipSell > maxTax) {
                     shouldBuy = false;
                 }
             }
         }
 
-        if(shouldBuy && msg.includes("BNB") && msg.includes(strategy)) {
-           	 token.push({
-               	 	tokenAddress: address,
-                	didBuy: false,
-                	hasSold: false,
-                	tokenSellTax: slipSell,
-                	tokenLiquidityType: 'BNB',
-                	tokenLiquidityAmount: liquidity,
-                	buyPath: [addresses.WBNB, address],
-                	sellPath: [address, addresses.WBNB],
-                	contract: new ethers.Contract(address, tokenAbi, account),
-                	index: buyCount,
-			checkProfit: function () { checkForProfit(this);}
-            	});
-	    	console.log('Buying token now ', address);	
-            	buy();
-		
-        }else if(shouldBuy && msg.includes("BUSD") && msg.includes(strategy)) {
-           	 token.push({
-                	tokenAddress: address,
-                	didBuy: false,
-                	hasSold: false,
-                	tokenSellTax: slipSell,
-                	tokenLiquidityType: 'BUSD',
-                	tokenLiquidityAmount: 0,
-                	buyPath: [addresses.WBNB, addresses.BUSD, address],
-                	sellPath: [address, addresses.BUSD, addresses.WBNB],
-                	contract: new ethers.Contract(address, tokenAbi, account),
-                	index: buyCount,
-			checkProfit: function () { checkForProfit(this);}
-           	 });
-	    	console.log('Buying token now', address);	
-            	buy();
+        if (shouldBuy && msg.includes("BNB") && msg.includes(strategy)) {
+            token.push({
+                tokenAddress: address,
+                didBuy: false,
+                hasSold: false,
+                tokenSellTax: slipSell,
+                tokenLiquidityType: 'BNB',
+                tokenLiquidityAmount: liquidity,
+                buyPath: [addresses.WBNB, address],
+                sellPath: [address, addresses.WBNB],
+                contract: new ethers.Contract(address, tokenAbi, account),
+                index: buyCount,
+                checkProfit: function () { checkForProfit(this); }
+            });
+            console.log('Buying token now ', address);
+            buy();
+
+        } else if (shouldBuy && msg.includes("BUSD") && msg.includes(strategy)) {
+            token.push({
+                tokenAddress: address,
+                didBuy: false,
+                hasSold: false,
+                tokenSellTax: slipSell,
+                tokenLiquidityType: 'BUSD',
+                tokenLiquidityAmount: 0,
+                buyPath: [addresses.WBNB, addresses.BUSD, address],
+                sellPath: [address, addresses.BUSD, addresses.WBNB],
+                contract: new ethers.Contract(address, tokenAbi, account),
+                index: buyCount,
+                checkProfit: function () { checkForProfit(this); }
+            });
+            console.log('Buying token now', address);
+            buy();
         }
     }
 }

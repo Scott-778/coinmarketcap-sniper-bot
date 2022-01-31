@@ -104,7 +104,7 @@ async function approve() {
     const receipt = await tx.wait();
     console.log(receipt);
     if(autoSell) {
-        token[buycount - 1].checkProfit();
+        token[buyCount - 1].checkProfit();
     } else {
         if(buyCount == numberOfTokensToBuy){
             process.exit();

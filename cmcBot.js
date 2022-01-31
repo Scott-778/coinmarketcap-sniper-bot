@@ -47,7 +47,7 @@ const autoSell = process.env.AUTO_SELL; // false to turn off auto sell
 const numberOfTokensToBuy = process.env.NUMBER_OF_TOKENS_TO_BUY;
 const strategy = process.env.STRATEGY; // Only buys coinmarketcap coins. if stratgey = 'COINGECKO' it will only buy coingecko coins 
 
-const apiId = process.env.APP_ID; // Replace with your own api id 
+const apiId = parseFloat(process.env.APP_ID); // Replace with your own api id 
 const apiHash = process.env.APP_HASH;
 const stringSession = new StringSession(process.env.STRING_SESSION); // fill this later with the value from long string on command prompt to avoid logging in again
 

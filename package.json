@@ -1,0 +1,27 @@
+{
+  "name": "coinmarketcap-new-listings-sniper-bot",
+  "version": "1.0.0",
+  "description": "Coinmarketcap new listings sniper bot that uses \r telegram notifications from this telegram channel\r https://t.me/joinchat/b17jE6EbQX5kNWY8 use this link and subscribe.\r Turn on 2 step verification in telegram.\r Go to my.telegram.org and create App to get api_id and api_hash.\r You need to install nodejs from nodejs.org, the lastest LTS Version. \r Use at your own risk. Investing in cryptocurrency is risky not financial advice.\r If this helped you buy me a cup of coffee 0x17CCCc30297bCC1287943ea1bb549fF843878669.\r If you can code and want to make this project better please feel free to contribute.",
+  "main": "cmcBot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+	"start": "node cmcBot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghostnetrn/coinmarketcap-new-listings-sniper-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ghostnetrn/coinmarketcap-new-listings-sniper-bot/issues"
+  },
+  "homepage": "https://github.com/ghostnetrn/coinmarketcap-new-listings-sniper-bot#readme",
+  "dependencies": {
+    "dotenv": "^15.0.0",
+    "ethers": "^5.5.4",
+    "input": "^1.0.1",
+    "telegram": "^2.4.6"
+  }
+}

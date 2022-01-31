@@ -15,12 +15,11 @@ If you have an issue please don't post screenshots with personal information lik
 To run the bot open the Command Prompt and go to where cmcBot.js is located on your computer with the change directory command 
 ```cd C:\Path of where cmcBot.js is located```
 
-Then install all the modules with npm
+## Installation
 
-`npm install ethers`
-`npm install telegram`
-`npm install input`
+- RENAME the "env.example" file to ".env" and edit it.
+- Install `npm i`
 
-Then run the bot
+## Then run the bot
 
-`node cmcBot.js` or `node cmcBotBUSD.js`
+`npm start` or `node cmcBot.js` or `node cmcBotBUSD.js`

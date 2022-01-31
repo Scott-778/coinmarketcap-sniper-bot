@@ -13,35 +13,39 @@ const { StringSession } = require("telegram/sessions");
 const input = require("input"); // npm install input
 const { NewMessage } = require('telegram/events');
 const ethers = require('ethers'); // npm install ethers
-
+const env = require("dotenv"); // env variables
+const result = env.config()
+if (result.error) {
+    throw result.error
+}
 /* ----------------------------------- */
 
-const apiId = ; 
-const apiHash = '';
-const stringSession = new StringSession(""); // fill this later with the value from session.save()
+const apiId = parseFloat(process.env.APP_ID); 
+const apiHash = process.env.APP_HASH;
+const stringSession = new StringSession(process.env.STRING_SESSION); // fill this later with the value from session.save()
 
 const addresses = {
 WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 BUSD: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
 pancakeRouter: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
-recipient: '' // Your wallet address
+recipient: process.env.RECIPIENT // Your wallet address
 }
-const mnemonic = ''; // Your wallet seed phrase
-const myGasPrice = ethers.utils.parseUnits('5', 'gwei'); // Adjust your gas here, the higher the better
-const myGasPriceForApproval = ethers.utils.parseUnits('5', 'gwei');
-const myGasLimit = 1000000; // Gas limit 
+const mnemonic = process.env.MNEMONIC; // Your wallet seed phrase
+const myGasPrice = ethers.utils.parseUnits(process.env.GAS_PRICE, 'gwei'); // Adjust your gas here, the higher the better
+const myGasPriceForApproval = ethers.utils.parseUnits(process.env.GAS_PRICE, 'gwei');
+const myGasLimit = process.env.GAS_LIMIT; // Gas limit 
 
-const investmentAmount = '1.5'; // The amount you want to buy in BUSD
-const maxTax = 10; // The maximum tax for token you want to buy 
+const investmentAmount = process.env.INVESTMENT_AMOUNT; // The amount you want to buy in BUSD
+const maxTax = process.env.MAX_TAX; // The maximum tax for token you want to buy 
 
-const profitXAmount = 1.50; // take 50% profit with max tax accounted for.
-const stopLossXAmount = 0.90; // 10% loss with max tax accounted for. 
-const autoSell = true;  // false to turn off auto sell
+const profitXAmount = process.env.PROFIT_X_AMOUNT; // take 50% profit with max tax accounted for.
+const stopLossXAmount = process.env.STOPLOSS_X_AMOUNT; // 10% loss with max tax accounted for. 
+const autoSell = process.env.AUTO_SELL;  // false to turn off auto sell
 
 /* ----------------------------------- */
 
 const channelId = 1517585345;
-const node = 'https://bsc-dataseed.binance.org/';
+const node = process.env.BSC_NODE;
 const wallet = new ethers.Wallet.fromMnemonic(mnemonic);
 const provider = new ethers.providers.JsonRpcProvider(node);
 const account = wallet.connect(provider); 

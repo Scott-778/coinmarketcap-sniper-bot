@@ -207,7 +207,7 @@ async function onNewMessage(event) {
         var address = '';
         var shouldBuy = true;
         for (var i = 0; i < msg.length; i++) {
-            if(msg[i].length == 42 && msg[i].startsWith("0x")) {
+            if(ethers.utils.isAddress(msg[i])) {
                 address = msg[i];
             }
             if(msg[i] == "BNB") {

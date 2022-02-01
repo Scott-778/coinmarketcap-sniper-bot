@@ -34,6 +34,8 @@ const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
 const maxTax = 10; // 10%
 const maxLiquidity = 500;
 const minLiquidity = 30;
+const maxLiquidityBUSD = 200; // in thousands of BUSD
+const minLiquidityBUSD = 5; // in thousands of BUSD
 
 const profitXAmount = 1.9; // take 90% profit with max tax accounted for.
 const stopLossXAmount = 0.90; // 10% loss with max tax accounted for. 
@@ -221,9 +223,20 @@ async function onNewMessage(event) {
                     shouldBuy = false;
                 }
             }
+	    else if(msg[i] == "BUSD") {
+                var liquidity = parseFloat(msg[i - 1]);
+                console.log('--- NEW TOKEN FOUND ---');
+                console.log('Liquidity:', liquidity, 'thousands BUSD');
+                if(liquidity > maxLiquidityBUSD) {
+                    shouldBuy = false;
+                }
+                if(liquidity < minLiquidityBUSD) {
+                    shouldBuy = false;
+                }
+            }
             if(msg[i] == "(buy)") {
                 var slipBuy = parseInt(msg[i - 1]);
-		console.log('Buy tax:', slipBuy, '%');
+		console.log('Buy tax: ', slipBuy, '%');
                 if(slipBuy > maxTax) {
                     shouldBuy = false;
                 }
@@ -261,7 +274,7 @@ async function onNewMessage(event) {
                 	hasSold: false,
                 	tokenSellTax: slipSell,
                 	tokenLiquidityType: 'BUSD',
-                	tokenLiquidityAmount: 0,
+                	tokenLiquidityAmount: liquidity,
                 	buyPath: [addresses.WBNB, addresses.BUSD, address],
                 	sellPath: [address, addresses.BUSD, addresses.WBNB],
                 	contract: new ethers.Contract(address, tokenAbi, account),

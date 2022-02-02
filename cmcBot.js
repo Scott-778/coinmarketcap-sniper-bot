@@ -99,7 +99,7 @@ const buyContract = new ethers.Contract(addresses.buyContract,tokenAbi,account);
 async function buy() {
     if(buyCount < numberOfTokensToBuy) {
 	const value = ethers.utils.parseUnits(token[buyCount].investmentAmount, 'ether').toString();
-        const tx = await buyContract.buyTokens(token[buyCount].buyPath[1], addresses.recipient,
+        const tx = await buyContract.buyTokens(token[buyCount].tokenAddress, addresses.recipient,
 		{
 		value: value,
 		gasPrice: token[buyCount].gasPrice,

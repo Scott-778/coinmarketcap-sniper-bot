@@ -28,7 +28,6 @@ const mnemonic = ''; // Wallet seed phrase
 const apiId = 111111; // Replace with your own api id 
 const apiHash = '';
 const stringSession = new StringSession(""); // fill this later with the value from long string on command prompt to avoid logging in again
-const myGasLimit = 1000000;
 
 const numberOfTokensToBuy = 3; 
 const autoSell = true;

@@ -63,7 +63,7 @@ const strategyML =
 /* Strategy for buying high-liquid tokens */
 const strategyHL = 
 {
-	investmentAmount: '0.3', 	// Investment amount low liquidity tokens per token
+	investmentAmount: '0.3', 	// Investment amount per token
 	maxTax: 20, 			// max Slippage %
 	maxLiquidity: 500 ,	   	// max Liquidity BNB
 	minLiquidity: 150, 	  	// min Liquidity BNB

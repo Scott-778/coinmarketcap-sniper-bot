@@ -6,8 +6,9 @@ Turn on 2 step verification in telegram.
 Go to my.telegram.org and create App to get api_id and api_hash.
 You need to install nodejs from nodejs.org, the lastest LTS Version. 
 Use at your own risk. Investing in cryptocurrency is risky not financial advice.
-If this helped you buy me a cup of coffee 0x17CCCc30297bCC1287943ea1bb549fF843878669.
 If you can code and want to make this project better please feel free to contribute.
+
+There is a small 0.07% buying fee per buy. This is to help me buy a cup of coffee and support for this project. 
 
 Important! 
 If you have an issue please don't post screenshots with personal information like seed phrase, telephone number, Telegram code, Telegram two factor password, or Telegram string session. Please keep that information private!

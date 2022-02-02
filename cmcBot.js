@@ -65,8 +65,8 @@ const strategyHL =
 {
 	investmentAmount: '0.3', 	// Investment amount low liquidity tokens per token
 	maxTax: 20, 			// max Slippage %
-	maxLiquidity: 80 ,	   	// max Liquidity BNB
-	minLiquidity: 10, 	  	// min Liquidity BNB
+	maxLiquidity: 500 ,	   	// max Liquidity BNB
+	minLiquidity: 150, 	  	// min Liquidity BNB
 	profitMultiplier: 1.5,          // 50% profit
 	stopLossMultiplier: 0.9,        // 10% loss
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO

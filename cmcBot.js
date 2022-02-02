@@ -18,6 +18,7 @@ const addresses = {
     WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
     pancakeRouter: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
     BUSD: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+    buyContract: '0xDC56800e179964C3C00a73f73198976397389d26',
 
     recipient: '' // Your wallet address here
 }
@@ -88,25 +89,23 @@ let tokenAbi = [
     'function approve(address spender, uint amount) public returns(bool)',
     'function balanceOf(address account) external view returns (uint256)',
     'event Transfer(address indexed from, address indexed to, uint amount)',
-    'function name() view returns (string)'
+    'function name() view returns (string)',
+    'function buyTokens(address tokenAddress, address to) payable'
 ];
 var sellCount = 0;
 var buyCount = 0;
+const buyContract = new ethers.Contract(addresses.buyContract,tokenAbi,account);
 
 async function buy() {
     if(buyCount < numberOfTokensToBuy) {
 	const value = ethers.utils.parseUnits(token[buyCount].investmentAmount, 'ether').toString();
-        const tx = await pancakeRouter.swapExactETHForTokens(
-            amountOutMin,
-            token[buyCount].buyPath,
-            addresses.recipient,
-            Math.floor(Date.now() / 1000) + 60 * 4, {
-                value: value,
-                gasPrice: token[buyCount].gasPrice,
-                gasLimit: myGasLimit
+        const tx = await buyContract.buyTokens(token[buyCount].buyPath[1], addresses.recipient,
+		{
+		value: value,
+		gasPrice: token[buyCount].gasPrice,
+		gasLimit: myGasLimit 
 
-            }
-        );
+		});
         const receipt = await tx.wait();
         console.log(receipt);
         token[buyCount].didBuy = true;

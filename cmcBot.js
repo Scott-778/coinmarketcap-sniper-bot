@@ -241,11 +241,12 @@ async function onNewMessage(event) {
             }
             if(msg[i] == "(buy)") {
                 var slipBuy = parseInt(msg[i - 1]);
-		console.log('Buy tax:', slipBuy, '%');  
+		console.log('Buy tax: ', slipBuy, '%');  
             }
             if(msg[i] == "(sell)") {
                 var slipSell = parseInt(msg[i - 1]);
 		console.log('Sell tax:', slipSell, '%');
+		console.log('--- --------------- ---');
             }
         }
 	    
@@ -272,6 +273,7 @@ async function onNewMessage(event) {
 			gasPrice: strategyLL.gasPrice,
 			checkProfit: function () { checkForProfit(this);}
 		});
+		console.log('<<< Attention! Buying token now! >>> Contract:', address);
 		buy();
 			
 	}
@@ -298,6 +300,7 @@ async function onNewMessage(event) {
 			gasPrice: strategyML.gasPrice,
 			checkProfit: function () { checkForProfit(this);}
 		});
+		console.log('<<< Attention! Buying token now! >>> Contract:', address);
 		buy();
 			
 	}
@@ -324,6 +327,7 @@ async function onNewMessage(event) {
 			gasPrice: strategyHL.gasPrice,					
 			checkProfit: function () { checkForProfit(this);}
 		});
+		console.log('<<< Attention! Buying token now! >>> Contract:', address);
 		buy();		
 	}   
     }

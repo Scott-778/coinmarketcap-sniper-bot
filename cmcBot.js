@@ -307,7 +307,7 @@ async function onNewMessage(event) {
 	else if(liquidity < strategyHL.maxLiquidity &&
 		liquidity > strategyHL.minLiquidity &&
 		slipBuy < strategyHL.maxTax &&
-		slipSell < strategyHL.maxTax && msg.includes("BNB") && msg.includes(strategyHl.platform)){
+		slipSell < strategyHL.maxTax && msg.includes("BNB") && msg.includes(strategyHL.platform)){
 					
 		token.push({
 			tokenAddress: address,

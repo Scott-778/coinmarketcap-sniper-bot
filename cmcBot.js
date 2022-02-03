@@ -36,8 +36,8 @@ const myGasLimit = 1000000;
 
 const BUYALLTOKENS = true; 
 
-/* if BUYALLTOKENS is true*/
-/* Strategy to buy any token that we get notification for and liquidity is BNB */
+/* if BUYALLTOKENS is true.
+Default Strategy to buy any token that we get notification for and liquidity is BNB */
 const buyAllTokensStrategy = {
 	
 	investmentAmount: '0.5',
@@ -47,7 +47,8 @@ const buyAllTokensStrategy = {
 	
 }
 
-/* if BUYALLTOKENS is false it will filter tokens to buy based on strategies below */
+/* if BUYALLTOKENS is false it will filter tokens to buy based on strategies below, you can adjust these filters to your preference */
+
 /* Strategy for buying low-liquid tokens */
 const strategyLL = 
 {

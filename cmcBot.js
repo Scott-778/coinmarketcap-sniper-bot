@@ -329,6 +329,8 @@ async function onNewMessage(event) {
 		});
 		console.log('<<< Attention! Buying token now! >>> Contract:', address);
 		buy();		
-	}   
+	}else{
+		console.log('--- Not buying this token does not match strategy ---');
+	}
     }
 }

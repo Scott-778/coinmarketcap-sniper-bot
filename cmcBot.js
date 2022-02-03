@@ -39,7 +39,7 @@ const strategyLL =
 {
 	investmentAmount: '0.1', 	// Investment amount per token
 	maxTax: 20, 			// max Slippage %
-	maxLiquidity: 80 ,	        // max Liquidity BNB
+	maxLiquidity: 100 ,	        // max Liquidity BNB
 	minLiquidity: 10, 	  	// min Liquidity BNB
 	profitMultiplier: 2.5,          // 2.5X
 	stopLossMultiplier: 0.7,        // 30% loss
@@ -52,8 +52,8 @@ const strategyML =
 {
 	investmentAmount: '0.2', 	// Investment amount per token
 	maxTax: 10, 			// max Slippage %
-	maxLiquidity: 150 ,	        // max Liquidity BNB
-	minLiquidity: 80, 	  	// min Liquidity BNB
+	maxLiquidity: 250 ,	        // max Liquidity BNB
+	minLiquidity: 100, 	  	// min Liquidity BNB
 	profitMultiplier: 1.8,          // 80% profit
 	stopLossMultiplier: 0.8,        // 20% loss
 	platform: "COINGECKO",          // Either COINMARKETCAP or COINGECKO
@@ -64,9 +64,9 @@ const strategyML =
 const strategyHL = 
 {
 	investmentAmount: '0.3', 	// Investment amount per token
-	maxTax: 20, 			// max Slippage %
-	maxLiquidity: 500 ,	   	// max Liquidity BNB
-	minLiquidity: 150, 	  	// min Liquidity BNB
+	maxTax: 5, 			// max Slippage %
+	maxLiquidity: 1000 ,	   	// max Liquidity BNB
+	minLiquidity: 250, 	  	// min Liquidity BNB
 	profitMultiplier: 1.5,          // 50% profit
 	stopLossMultiplier: 0.9,        // 10% loss
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO

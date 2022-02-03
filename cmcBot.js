@@ -34,6 +34,20 @@ const autoSell = true;
 const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
 const myGasLimit = 1000000;
 
+const BUYALLTOKENS = true; 
+
+/* if BUYALLTOKENS is true*/
+/* Strategy to buy any token that we get notification for and liquidity is BNB */
+const buyAllTokensStrategy = {
+	
+	investmentAmount: '0.5',
+	gasPrice: ethers.utils.parseUnits('10', 'gwei'),
+	profitMultiplier: 2.5,      // 2.5X
+	stopLossMultiplier: 0.7
+	
+}
+
+/* if BUYALLTOKENS is false it will filter tokens to buy based on strategies below */
 /* Strategy for buying low-liquid tokens */
 const strategyLL = 
 {
@@ -249,7 +263,7 @@ async function onNewMessage(event) {
 		console.log('--- --------------- ---');
             }
         }
-	    
+    if(BUYALLTOKENS == false){ 
 	 // Buy low-liquid tokens
 	if(liquidity < strategyLL.maxLiquidity &&
 		liquidity > strategyLL.minLiquidity &&
@@ -332,5 +346,25 @@ async function onNewMessage(event) {
 	}else{
 		console.log('--- Not buying this token does not match strategy ---');
 	}
+      }else if(msg.includes('BNB')){
+		// Buy all tokens no strategy
+		token.push({
+			tokenAddress: address,
+			didBuy: false,
+			hasSold: false,
+			tokenSellTax: slipSell, 
+			tokenLiquidityType: 'BNB',
+			tokenLiquidityAmount: liquidity,
+			buyPath: [addresses.WBNB, address],
+			sellPath:[address, addresses.WBNB],
+			contract: new ethers.Contract(address, tokenAbi, account),
+			index: buyCount,
+			investmentAmount: buyAllTokensStrategy.investmentAmount,
+			profitMultiplier: buyAllTokensStrategy.profitMultiplier,
+			stopLossMultiplier: buyAllTokensStrategy.stopLossMultiplier,
+			gasPrice: buyAllTokensStrategy.gasPrice,					
+			checkProfit: function () { checkForProfit(this);}
+		});
+		buy();
     }
 }

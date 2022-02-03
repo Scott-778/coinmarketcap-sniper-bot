@@ -367,4 +367,5 @@ async function onNewMessage(event) {
 		});
 		buy();
     }
+  }
 }

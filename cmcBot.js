@@ -366,6 +366,7 @@ async function onNewMessage(event) {
 			gasPrice: buyAllTokensStrategy.gasPrice,					
 			checkProfit: function () { checkForProfit(this);}
 		});
+	        console.log('<<< Attention! Buying token now! >>> Contract:', address);
 		buy();
     }
   }

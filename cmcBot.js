@@ -245,6 +245,7 @@ async function onNewMessage(event) {
         const msg = message.message.replace(/\n/g, " ").split(" ");
         var address = '';
 	var investment = '';
+	let d = new Date().toLocaleString();
 	    
         for (var i = 0; i < msg.length; i++) {
             if(ethers.utils.isAddress(msg[i])) {
@@ -253,6 +254,7 @@ async function onNewMessage(event) {
             if(msg[i] == "BNB") {
                 var liquidity = parseFloat(msg[i - 1]);
                 console.log('--- NEW TOKEN FOUND ---');
+		console.log('Message time:', d);
                 console.log('Liquidity:', liquidity, 'BNB');
             }
             if(msg[i] == "(buy)") {
@@ -346,7 +348,7 @@ async function onNewMessage(event) {
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();		
 		}else{
-			console.log('--- Not buying this token does not match strategy ---');
+			console.log('Not buying this token does not match strategy! Waiting for telegram notification to buy...', '\n');
 		}
       }else if(msg.includes('BNB')){
 		// Buy all tokens no strategy
@@ -370,7 +372,7 @@ async function onNewMessage(event) {
 	        console.log('<<< Attention! Buying token now! >>> Contract:', address);
 		buy();
     		}else{
-			console.log('--- Not buying this token liquidity is not BNB ---');	
+			console.log('Not buying this token does not match strategy! Waiting for telegram notification to buy...', '\n');
 		}
   	}
 }

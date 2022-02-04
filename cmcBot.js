@@ -244,8 +244,6 @@ async function onNewMessage(event) {
     if(message.peerId.channelId == channelId) {
         const msg = message.message.replace(/\n/g, " ").split(" ");
         var address = '';
-	var investment = '';
-	    
         for (var i = 0; i < msg.length; i++) {
             if(ethers.utils.isAddress(msg[i])) {
                 address = msg[i];

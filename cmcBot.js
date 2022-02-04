@@ -26,29 +26,30 @@ const addresses = {
 /*-----------Settings-----------*/
 const mnemonic = ''; // Wallet seed phrase
 const apiId = 111111; // Replace with your own api id 
-const apiHash = '';
+const apiHash = '';   // Replace with your own api hash
 const stringSession = new StringSession(""); // fill this later with the value from long string on command prompt to avoid logging in again
 
-const numberOfTokensToBuy = 3; 
-const autoSell = true;
+const numberOfTokensToBuy = 10; // number of tokens you want to buy
+const autoSell = true;  // If you want to auto sell or not 
+
 const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
 const myGasLimit = 1000000;
 
-const BUYALLTOKENS = true; 
+const BUYALLTOKENS = true; // if true it will buy all tokens without stategies, change to false to use the strategy filters
 
-/* if BUYALLTOKENS is true.
-Default Strategy to buy any token that we get notification for and liquidity is BNB */
+/* if BUYALLTOKENS is true. Default Strategy to buy any token that we get notification for and liquidity is BNB */
+
 const buyAllTokensStrategy = {
 	
-	investmentAmount: '0.5',
+	investmentAmount: '0.5', // Amount to invest per token in BNB
 	gasPrice: ethers.utils.parseUnits('10', 'gwei'),
 	profitMultiplier: 2.5,      // 2.5X
-	stopLossMultiplier: 0.7
+	stopLossMultiplier: 0.7  // 30% loss
 	
 }
 
+/*------------Advanced Settings-------------*/
 /* if BUYALLTOKENS is false it will filter tokens to buy based on strategies below, you can adjust these filters to your preference */
-
 /* Strategy for buying low-liquid tokens */
 const strategyLL = 
 {
@@ -266,87 +267,87 @@ async function onNewMessage(event) {
         }
     if(BUYALLTOKENS == false){ 
 	 // Buy low-liquid tokens
-	if(liquidity < strategyLL.maxLiquidity &&
+		if(liquidity < strategyLL.maxLiquidity &&
 		liquidity > strategyLL.minLiquidity &&
 		slipBuy < strategyLL.maxTax &&
 		slipSell < strategyLL.maxTax && msg.includes("BNB") && msg.includes(strategyLL.platform)){
 					
-		token.push({
-			tokenAddress: address,
-			didBuy: false,
-			hasSold: false,
-			tokenSellTax: slipSell, 
-			tokenLiquidityType: 'BNB',
-			tokenLiquidityAmount: liquidity,
-			buyPath: [addresses.WBNB, address],
-			sellPath:[address, addresses.WBNB],
-			contract: new ethers.Contract(address, tokenAbi, account),
-			index: buyCount,
-			investmentAmount: strategyLL.investmentAmount,
-			profitMultiplier: strategyLL.profitMultiplier,
-			stopLossMultiplier: strategyLL.stopLossMultiplier,
-			gasPrice: strategyLL.gasPrice,
-			checkProfit: function () { checkForProfit(this);}
-		});
-		console.log('<<< Attention! Buying token now! >>> Contract:', address);
-		buy();
+			token.push({
+				tokenAddress: address,
+				didBuy: false,
+				hasSold: false,
+				tokenSellTax: slipSell, 
+				tokenLiquidityType: 'BNB',
+				tokenLiquidityAmount: liquidity,
+				buyPath: [addresses.WBNB, address],
+				sellPath:[address, addresses.WBNB],
+				contract: new ethers.Contract(address, tokenAbi, account),
+				index: buyCount,
+				investmentAmount: strategyLL.investmentAmount,
+				profitMultiplier: strategyLL.profitMultiplier,
+				stopLossMultiplier: strategyLL.stopLossMultiplier,
+				gasPrice: strategyLL.gasPrice,
+				checkProfit: function () { checkForProfit(this);}
+			});
+			console.log('<<< Attention! Buying token now! >>> Contract:', address);
+			buy();
 			
-	}
+		}
 	// Buy medium-liquid tokens
-	else if(liquidity < strategyML.maxLiquidity &&
-		liquidity > strategyML.minLiquidity &&
-		slipBuy < strategyML.maxTax &&
-		slipSell < strategyML.maxTax && msg.includes("BNB") && msg.includes(strategyML.platform)){
-					
-		token.push({
-			tokenAddress: address,
-			didBuy: false,
-			hasSold: false,
-			tokenSellTax: slipSell, 
-			tokenLiquidityType: 'BNB',
-			tokenLiquidityAmount: liquidity,
-			buyPath: [addresses.WBNB, address],
-			sellPath:[address, addresses.WBNB],
-			contract: new ethers.Contract(address, tokenAbi, account),
-			index: buyCount,
-			investmentAmount: strategyML.investmentAmount, 
-			profitMultiplier: strategyML.profitMultiplier,
-			stopLossMultiplier: strategyML.stopLossMultiplier,
-			gasPrice: strategyML.gasPrice,
-			checkProfit: function () { checkForProfit(this);}
-		});
-		console.log('<<< Attention! Buying token now! >>> Contract:', address);
-		buy();
-			
-	}
-	//Buy high-liquid tokens
-	else if(liquidity < strategyHL.maxLiquidity &&
-		liquidity > strategyHL.minLiquidity &&
-		slipBuy < strategyHL.maxTax &&
-		slipSell < strategyHL.maxTax && msg.includes("BNB") && msg.includes(strategyHL.platform)){
-					
-		token.push({
-			tokenAddress: address,
-			didBuy: false,
-			hasSold: false,
-			tokenSellTax: slipSell, 
-			tokenLiquidityType: 'BNB',
-			tokenLiquidityAmount: liquidity,
-			buyPath: [addresses.WBNB, address],
-			sellPath:[address, addresses.WBNB],
-			contract: new ethers.Contract(address, tokenAbi, account),
-			index: buyCount,
-			investmentAmount: strategyHL.investmentAmount,
-			profitMultiplier: strategyHL.profitMultiplier,
-			stopLossMultiplier: strategyHL.stopLossMultiplier,
-			gasPrice: strategyHL.gasPrice,					
-			checkProfit: function () { checkForProfit(this);}
-		});
-		console.log('<<< Attention! Buying token now! >>> Contract:', address);
-		buy();		
-	}else{
-		console.log('--- Not buying this token does not match strategy ---');
-	}
+		else if(liquidity < strategyML.maxLiquidity &&
+			liquidity > strategyML.minLiquidity &&
+			slipBuy < strategyML.maxTax &&
+			slipSell < strategyML.maxTax && msg.includes("BNB") && msg.includes(strategyML.platform)){
+
+			token.push({
+				tokenAddress: address,
+				didBuy: false,
+				hasSold: false,
+				tokenSellTax: slipSell, 
+				tokenLiquidityType: 'BNB',
+				tokenLiquidityAmount: liquidity,
+				buyPath: [addresses.WBNB, address],
+				sellPath:[address, addresses.WBNB],
+				contract: new ethers.Contract(address, tokenAbi, account),
+				index: buyCount,
+				investmentAmount: strategyML.investmentAmount, 
+				profitMultiplier: strategyML.profitMultiplier,
+				stopLossMultiplier: strategyML.stopLossMultiplier,
+				gasPrice: strategyML.gasPrice,
+				checkProfit: function () { checkForProfit(this);}
+			});
+			console.log('<<< Attention! Buying token now! >>> Contract:', address);
+			buy();
+
+		}
+		//Buy high-liquid tokens
+		else if(liquidity < strategyHL.maxLiquidity &&
+			liquidity > strategyHL.minLiquidity &&
+			slipBuy < strategyHL.maxTax &&
+			slipSell < strategyHL.maxTax && msg.includes("BNB") && msg.includes(strategyHL.platform)){
+
+			token.push({
+				tokenAddress: address,
+				didBuy: false,
+				hasSold: false,
+				tokenSellTax: slipSell, 
+				tokenLiquidityType: 'BNB',
+				tokenLiquidityAmount: liquidity,
+				buyPath: [addresses.WBNB, address],
+				sellPath:[address, addresses.WBNB],
+				contract: new ethers.Contract(address, tokenAbi, account),
+				index: buyCount,
+				investmentAmount: strategyHL.investmentAmount,
+				profitMultiplier: strategyHL.profitMultiplier,
+				stopLossMultiplier: strategyHL.stopLossMultiplier,
+				gasPrice: strategyHL.gasPrice,					
+				checkProfit: function () { checkForProfit(this);}
+			});
+			console.log('<<< Attention! Buying token now! >>> Contract:', address);
+			buy();		
+		}else{
+			console.log('--- Not buying this token does not match strategy ---');
+		}
       }else if(msg.includes('BNB')){
 		// Buy all tokens no strategy
 		token.push({
@@ -368,6 +369,8 @@ async function onNewMessage(event) {
 		});
 	        console.log('<<< Attention! Buying token now! >>> Contract:', address);
 		buy();
-    }
-  }
+    		}else{
+			console.log('--- Not buying this token liquidity is not BNB ---');	
+		}
+  	}
 }

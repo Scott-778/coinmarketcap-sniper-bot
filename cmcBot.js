@@ -6,7 +6,6 @@ https://t.me/joinchat/b17jE6EbQX5kNWY8 use this link and subscribe.
 Turn on two step verification in telegram.
 Go to my.telegram.org and create App to get api_id and api_hash.
 
-If this helped you buy me a cup of coffee 0x17CCCc30297bCC1287943ea1bb549fF843878669
 */
 const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
@@ -29,7 +28,7 @@ const apiId = 111111; // Replace with your own api id
 const apiHash = '';   // Replace with your own api hash
 const stringSession = new StringSession(""); // fill this later with the value from long string on command prompt to avoid logging in again
 
-const numberOfTokensToBuy = 10; // number of tokens you want to buy
+const numberOfTokensToBuy = 10; // number of different tokens you want to buy
 const autoSell = true;  // If you want to auto sell or not 
 
 const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
@@ -55,7 +54,7 @@ const buyAllTokensStrategy = {
 /* Strategy for buying low-liquid tokens */
 const strategyLL =
 {
-	investmentAmount: '0.1', 	// Investment amount per token
+	investmentAmount: '0.1', 	// Investment amount per token in BNB
 	maxTax: 20, 			// max Slippage %
 	maxLiquidity: 100,	        // max Liquidity BNB
 	minLiquidity: 10, 	  	// min Liquidity BNB
@@ -70,7 +69,7 @@ const strategyLL =
 /* Strategy for buying medium-liquid tokens */
 const strategyML =
 {
-	investmentAmount: '0.2', 	// Investment amount per token
+	investmentAmount: '0.2', 	// Investment amount per token in BNB
 	maxTax: 10, 			// max Slippage %
 	maxLiquidity: 250,	        // max Liquidity BNB
 	minLiquidity: 100, 	  	// min Liquidity BNB
@@ -85,7 +84,7 @@ const strategyML =
 /* Strategy for buying high-liquid tokens */
 const strategyHL =
 {
-	investmentAmount: '0.3', 	// Investment amount per token
+	investmentAmount: '0.3', 	// Investment amount per token in BNB
 	maxTax: 5, 			// max Slippage %
 	maxLiquidity: 1000,	   	// max Liquidity BNB
 	minLiquidity: 250, 	  	// min Liquidity BNB

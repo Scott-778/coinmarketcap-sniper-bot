@@ -33,7 +33,7 @@ const numberOfTokensToBuy = 10; // number of tokens you want to buy
 const autoSell = true;  // If you want to auto sell or not 
 
 const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
-const myGasLimit = 1000000;
+const myGasLimit = 1500000;
 
 const BUYALLTOKENS = true; // if true it will buy all tokens without stategies, change to false to use the strategy filters
 

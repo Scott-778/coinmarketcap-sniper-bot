@@ -131,7 +131,7 @@ async function buy() {
 
 			});
 		const receipt = await tx.wait();
-		console.log(receipt);
+		console.log("Buy Transaction Hash:",receipt.transactionHash);
 		token[buyCount].didBuy = true;
 		buyCount++;
 		approve();
@@ -150,7 +150,7 @@ async function approve() {
 	}
 	);
 	const receipt = await tx.wait();
-	console.log(receipt);
+	console.log("Approve Transaction Hash:",receipt.transactionHash);
 	if (autoSell) {
 		token[buyCount - 1].checkProfit();
 	} else {
@@ -226,7 +226,7 @@ async function sell(tokenObj, isProfit) {
 		}
 		);
 		const receipt = await tx.wait();
-		console.log(receipt);
+		console.log("Sell Transaction Hash:",receipt.transactionHash);
 		sellCount++;
 		token[tokenObj.index].didSell = true;
 

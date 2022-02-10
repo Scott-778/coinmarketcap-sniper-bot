@@ -267,6 +267,9 @@ async function sell(tokenObj, isProfit) {
 async function onNewMessage(event) {
 	const message = event.message;
 	if (message.peerId.channelId == channelId) {
+		console.log('--- NEW TOKEN FOUND ---');
+		let timeStamp = new Date().toLocaleString();
+		console.log(timeStamp);
 		const msg = message.message.replace(/\n/g, " ").split(" ");
 		var address = '';
 		for (var i = 0; i < msg.length; i++) {
@@ -275,7 +278,6 @@ async function onNewMessage(event) {
 			}
 			if (msg[i] == "BNB") {
 				var liquidity = parseFloat(msg[i - 1]);
-				console.log('--- NEW TOKEN FOUND ---');
 				console.log('Liquidity:', liquidity, 'BNB');
 			}
 			if (msg[i] == "(buy)") {

@@ -38,8 +38,6 @@ const myGasLimit = 1500000;
 const BUYALLTOKENS = true; // if true it will buy all tokens without stategies, change to false to use the strategy filters
 
 /* if BUYALLTOKENS is true. Default Strategy to buy any token that we get notification for and liquidity is BNB */
-
-
 const buyAllTokensStrategy = {
 
 	investmentAmount: '0.5', // Amount to invest per token in BNB
@@ -51,7 +49,10 @@ const buyAllTokensStrategy = {
 }
 
 /*------------Advanced Settings-------------*/
-/* if BUYALLTOKENS is false it will filter tokens to buy based on strategies below, you can adjust these filters to your preference */
+/* if BUYALLTOKENS is false it will filter tokens to buy based on strategies below, you can adjust these filters to your preference.
+   You can also use just one strategy, for example if I wanted to only use the low liquidity strategy I would change maxTax on lines 77 and 92 to a negative value ex -1 */
+
+
 /* Strategy for buying low-liquid tokens */
 const strategyLL =
 {
@@ -62,7 +63,7 @@ const strategyLL =
 	profitMultiplier: 2.5,          // 2.5X
 	stopLossMultiplier: 0.7,        // 30% loss
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
-	gasPrice: ethers.utils.parseUnits('10', 'gwei'), // Gas Price. Higher is better for low liquidity
+	gasPrice: ethers.utils.parseUnits('8', 'gwei'), // Gas Price
 	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
 	percentOfTokensToSellLoss: 100 // sell 100% when stoploss is reached 
 }
@@ -71,7 +72,7 @@ const strategyLL =
 const strategyML =
 {
 	investmentAmount: '0.2', 	// Investment amount per token in BNB
-	maxTax: 10, 			// max Slippage %
+	maxTax: 10, 			// max Slippage %    
 	maxLiquidity: 250,	        // max Liquidity BNB
 	minLiquidity: 100, 	  	// min Liquidity BNB
 	profitMultiplier: 1.8,          // 80% profit
@@ -92,7 +93,7 @@ const strategyHL =
 	profitMultiplier: 1.5,          // 50% profit
 	stopLossMultiplier: 0.9,        // 10% loss
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
-	gasPrice: ethers.utils.parseUnits('5', 'gwei'),
+	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
 	percentOfTokensToSellProfit: 75, // sell 75% of tokens when profit is reached
 	percentOfTokensToSellLoss: 100 // sell 100% of tokens when stoploss is reached 
 }

@@ -184,7 +184,10 @@ async function checkForProfit(token) {
 		} else {
 			currentValue = amount[1];
 		}
-		console.log('--- ', tokenName, '--- Current Value in BNB:', ethers.utils.formatUnits(currentValue), '--- Profit At:', ethers.utils.formatUnits(profitDesired), '--- Stop Loss At:', ethers.utils.formatUnits(stopLoss), '\n');
+		
+		let timeStamp = new Date().toLocaleString();
+		const enc = (s) => new TextEncoder().encode(s);
+                process.stdout.write(enc(`${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(stopLoss)}  \r`));
 
 		if (currentValue.gte(profitDesired)) {
 			if (buyCount <= numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {

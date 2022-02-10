@@ -12,6 +12,7 @@ const { StringSession } = require("telegram/sessions");
 const input = require("input");
 const { NewMessage } = require('telegram/events');
 const ethers = require('ethers');
+const open = require('open');
 
 const addresses = {
     WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
@@ -132,6 +133,8 @@ async function buy() {
 			});
 		const receipt = await tx.wait();
 		console.log("Buy Transaction Hash:",receipt.transactionHash);
+		const poocoinURL = new URL(token[buyCount].tokenAddress, 'https://poocoin.app/tokens/');
+		open(poocoinURL.href);
 		token[buyCount].didBuy = true;
 		buyCount++;
 		approve();

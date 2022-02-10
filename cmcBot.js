@@ -292,10 +292,10 @@ async function onNewMessage(event) {
 		}
 		if (BUYALLTOKENS == false) {
 			// Buy low-liquid tokens
-			if (liquidity < strategyLL.maxLiquidity &&
-				liquidity > strategyLL.minLiquidity &&
-				slipBuy < strategyLL.maxBuyTax &&
-				slipSell < strategyLL.maxSellTax && msg.includes("BNB") && msg.includes(strategyLL.platform)) {
+			if (liquidity <= strategyLL.maxLiquidity &&
+				liquidity >= strategyLL.minLiquidity &&
+				slipBuy <= strategyLL.maxBuyTax &&
+				slipSell <= strategyLL.maxSellTax && msg.includes("BNB") && msg.includes(strategyLL.platform)) {
 
 				token.push({
 					tokenAddress: address,
@@ -321,10 +321,10 @@ async function onNewMessage(event) {
 
 			}
 			// Buy medium-liquid tokens
-			else if (liquidity < strategyML.maxLiquidity &&
-				liquidity > strategyML.minLiquidity &&
-				slipBuy < strategyML.maxBuyTax &&
-				slipSell < strategyML.maxSellTax && msg.includes("BNB") && msg.includes(strategyML.platform)) {
+			else if (liquidity <= strategyML.maxLiquidity &&
+				liquidity >= strategyML.minLiquidity &&
+				slipBuy <= strategyML.maxBuyTax &&
+				slipSell <= strategyML.maxSellTax && msg.includes("BNB") && msg.includes(strategyML.platform)) {
 
 				token.push({
 					tokenAddress: address,
@@ -351,10 +351,10 @@ async function onNewMessage(event) {
 
 			}
 			//Buy high-liquid tokens
-			else if (liquidity < strategyHL.maxLiquidity &&
-				liquidity > strategyHL.minLiquidity &&
-				slipBuy < strategyHL.maxBuyTax &&
-				slipSell < strategyHL.maxSellTax && msg.includes("BNB") && msg.includes(strategyHL.platform)) {
+			else if (liquidity <= strategyHL.maxLiquidity &&
+				liquidity >= strategyHL.minLiquidity &&
+				slipBuy <= strategyHL.maxBuyTax &&
+				slipSell <= strategyHL.maxSellTax && msg.includes("BNB") && msg.includes(strategyHL.platform)) {
 
 				token.push({
 					tokenAddress: address,

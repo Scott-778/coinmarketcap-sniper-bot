@@ -24,9 +24,9 @@ cd coinmarketcap-new-listings-sniper-bot
 ```
 npm install
 ```
-Then edit .env file with your bsc wallet address, mnemonic, apiId and apiHash.
+Then edit .env file with your bsc wallet address, mnemonic, apiId and apiHash in your code editor and save file.
 
-Then adjust your buying strategies in cmcBot.js file.
+Then adjust your buying strategies in cmcBot.js file in your code editor and save file.
 
 To start bot run this command
 `node cmcBot.js`

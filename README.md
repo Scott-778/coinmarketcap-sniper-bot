@@ -31,3 +31,4 @@ Then adjust your buying strategies in cmcBot.js file in your code editor and sav
 To start bot run this command
 `node cmcBot.js`
 
+When bot is running it it will ask for your telephone number to log in to Telegram enter your telephone number with country code ex 15555555555 then press enter. Then telegram will send you a code to log in enter that number and press enter. If you have two step verification on the bot will ask for your two step password. Then leave the bot running and when you recieve a notification from this channel https://t.me/joinchat/b17jE6EbQX5kNWY8 the bot will buy that token.

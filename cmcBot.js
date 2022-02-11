@@ -13,21 +13,21 @@ const input = require("input");
 const { NewMessage } = require('telegram/events');
 const ethers = require('ethers');
 const open = require('open');
+require('dotenv').config();
 
 const addresses = {
-    WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
-    pancakeRouter: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
-    BUSD: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
-    buyContract: '0xDC56800e179964C3C00a73f73198976397389d26',
-
-    recipient: '' // Your wallet address here
+	WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+	pancakeRouter: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
+	BUSD: '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+	buyContract: '0xDC56800e179964C3C00a73f73198976397389d26',
+	recipient: process.env.recipient
 }
+const mnemonic = process.env.mnemonic; 
+const apiId = parseInt(process.env.apiId); 
+const apiHash = process.env.apiHash;   
+const stringSession = new StringSession(process.env.stringSession);
 
 /*-----------Settings-----------*/
-const mnemonic = ''; // Wallet seed phrase
-const apiId = 111111; // Replace with your own api id 
-const apiHash = '';   // Replace with your own api hash
-const stringSession = new StringSession(""); // fill this later with the value from long string on command prompt to avoid logging in again
 
 const numberOfTokensToBuy = 10; // number of different tokens you want to buy
 const autoSell = true;  // If you want to auto sell or not 

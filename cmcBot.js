@@ -25,7 +25,7 @@ const addresses = {
 const mnemonic = process.env.mnemonic; 
 const apiId = parseInt(process.env.apiId); 
 const apiHash = process.env.apiHash;   
-const stringSession = new StringSession(process.env.stringSession);
+const stringSession = new StringSession("");
 
 /*-----------Settings-----------*/
 

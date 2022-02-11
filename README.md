@@ -14,15 +14,13 @@ Join my telegram group where we can talk about this project, tokens and the best
 Important! 
 If you have an issue please don't post screenshots with personal information like seed phrase, telephone number, Telegram code, Telegram two factor password, or Telegram string session. Please keep that information private!
 
-To run the bot open the Command Prompt and go to where cmcBot.js is located on your computer with the change directory command 
-```cd C:\Path of where cmcBot.js is located```
+To install use these commands
 
-Then install all the modules with npm
+`git clone https://github.com/Scott-778/coinmarketcap-new-listings-sniper-bot.git`
+`cd coinmarketcap-new-listings-sniper-bot`
+`npm install`
 
-`npm install ethers`
-`npm install telegram`
-`npm install input`
+then edit .env file with your settings
 
-Then run the bot
+`node cmcBot.js`
 
-`node cmcBot.js` or `node cmcBotBUSD.js`

@@ -15,12 +15,16 @@ Important!
 If you have an issue please don't post screenshots with personal information like seed phrase, telephone number, Telegram code, Telegram two factor password, or Telegram string session. Please keep that information private!
 
 To install use these commands
-
-`git clone https://github.com/Scott-778/coinmarketcap-new-listings-sniper-bot.git`
-`cd coinmarketcap-new-listings-sniper-bot`
-`npm install`
-
-then edit .env file with your settings
+```
+git clone https://github.com/Scott-778/coinmarketcap-new-listings-sniper-bot.git
+```
+```
+cd coinmarketcap-new-listings-sniper-bot
+```
+```
+npm install
+```
+then edit .env file with your settings and then run
 
 `node cmcBot.js`
 

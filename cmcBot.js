@@ -46,7 +46,7 @@ const buyAllTokensStrategy = {
 	stopLossMultiplier: 0.7,  // 30% loss
 	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
 	percentOfTokensToSellLoss: 100, // sell 100% when stoploss is reached 
-	trailingStopLossPercent: 10     // 10% trailing stop loss
+	trailingStopLossPercent: 10     // 10% trailing stop loss. Change to zero to not use 
 }
 
 /*------------Advanced Settings-------------*/
@@ -68,7 +68,7 @@ const strategyLL =
 	gasPrice: ethers.utils.parseUnits('8', 'gwei'), // Gas Price
 	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
 	percentOfTokensToSellLoss: 100, // sell 100% when stoploss is reached 
-	trailingStopLossPercent: 10	// 10% trailing stop loss
+	trailingStopLossPercent: 10	// 10% trailing stop loss. Change to zero to not use 
 }
 
 /* Strategy for buying medium-liquid tokens */
@@ -85,7 +85,7 @@ const strategyML =
 	gasPrice: ethers.utils.parseUnits('7', 'gwei'),
 	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
 	percentOfTokensToSellLoss: 100, // sell 100% when stoploss is reached 
-	trailingStopLossPercent: 10	// 10% trailing stop loss
+	trailingStopLossPercent: 10	// 10% trailing stop loss.  Change to zero to not use 
 }
 
 /* Strategy for buying high-liquid tokens */
@@ -102,7 +102,7 @@ const strategyHL =
 	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
 	percentOfTokensToSellProfit: 75, // sell 75% of tokens when profit is reached
 	percentOfTokensToSellLoss: 100, // sell 100% of tokens when stoploss is reached 
-	trailingStopLossPercent: 10     // 10% trailing stop loss
+	trailingStopLossPercent: 10     // 10% trailing stop loss. Change to zero to not use
 }
 /*-----------End Settings-----------*/
 
@@ -180,7 +180,7 @@ async function getCurrentValue(token){
 }
 async function setStopLoss(token){
 	token.intitialValue = await getCurrentValue(token);
-	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) * (token.stopLossMultiplier - token.tokenSellTax / 100)).toFixed(18).toString());
+	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) * (token.stopLossMultiplier)).toFixed(18).toString());
 }
 function setStopLossTrailing(token,stopLossTrailing){
 	token.trailingStopLossPercent += token.initialTrailingStopLossPercent;
@@ -196,7 +196,7 @@ async function checkForProfit(token) {
 		const profitDesired = ethers.utils.parseUnits(takeProfit);
 		let stopLossTrailing = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.trailingStopLossPercent / 100 - token.tokenSellTax/ 100) + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString());
 		let stopLoss = token.stopLoss;
-		if(currentValue.gt(stopLossTrailing)){
+		if(currentValue.gt(stopLossTrailing) && token.trailingStopLossPercent > 0){
 			setStopLossTrailing(token, stopLossTrailing);
 		}
 		let timeStamp = new Date().toLocaleString();

@@ -34,7 +34,9 @@ To start bot run this command
 When bot is running it it will ask for your telephone number to log in to Telegram enter your telephone number with country code ex 15555555555 then press enter. Then telegram will send you a code to log in enter that number and press enter. If you have two step verification on the bot will ask for your two step password. Then leave the bot running and when you recieve a notification from this channel https://t.me/joinchat/b17jE6EbQX5kNWY8 the bot will buy that token.
 
 ## Screenshots
+![ghss3](https://user-images.githubusercontent.com/91510798/154159554-cd6a2d3a-c0ca-4710-9c10-b0fe388467a1.png)
 
 ![ghss](https://user-images.githubusercontent.com/91510798/154157680-404912c0-ab75-4cd1-b49f-1e740761ed79.png)
 
 
+![ghss2](https://user-images.githubusercontent.com/91510798/154159575-bdebb6cb-b81d-4567-8733-3dca4ae743d6.png)

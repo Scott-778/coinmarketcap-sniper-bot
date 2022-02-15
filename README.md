@@ -36,7 +36,5 @@ When bot is running it it will ask for your telephone number to log in to Telegr
 ## Screenshots
 ![ghss3](https://user-images.githubusercontent.com/91510798/154159554-cd6a2d3a-c0ca-4710-9c10-b0fe388467a1.png)
 
-![ghss](https://user-images.githubusercontent.com/91510798/154157680-404912c0-ab75-4cd1-b49f-1e740761ed79.png)
-
 
 ![ghss2](https://user-images.githubusercontent.com/91510798/154159575-bdebb6cb-b81d-4567-8733-3dca4ae743d6.png)

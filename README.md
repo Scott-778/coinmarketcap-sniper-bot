@@ -23,7 +23,9 @@ npm install
 Then edit .env file with your bsc wallet address, mnemonic, apiId and apiHash in your code editor and save file.
 
 To start bot run this command
-`node cmcBot.js`
+```
+node cmcBot.js
+```
 
 When bot is running it it will ask for your telephone number to log in to Telegram enter your telephone number with country code ex 15555555555 then press enter. Then telegram will send you a code to log in enter that number and press enter. If you have two step verification on the bot will ask for your two step password. Then pick your buying strategy default, low liquidity, medium liquidity, high liquidity or create a custom strategy. Then leave the bot running and when you recieve a notification from this channel https://t.me/joinchat/b17jE6EbQX5kNWY8 the bot will buy that token.
 

@@ -587,7 +587,7 @@ async function onNewMessage(event) {
 				initialTrailingStopLossPercent: 0,
 				trailingStopLossPercent: buyAllTokensStrategy.trailingStopLossPercent,
 				stopLoss: 0,
-				ntitialValue: 0
+				intitialValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();

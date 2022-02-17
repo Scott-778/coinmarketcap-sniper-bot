@@ -84,7 +84,7 @@ const strategyML =
 	profitPercent: 80,          // 80% profit
 	stopLossPercent: 20,        // 20% loss
 	platform: "COINMARKETCAP",          // Either COINMARKETCAP or COINGECKO
-	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
+	gasPrice: ethers.utils.parseUnits('10', 'gwei'),
 	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
 	percentOfTokensToSellLoss: 100 // sell 100% when stoploss is reached 
 }

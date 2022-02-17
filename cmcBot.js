@@ -28,15 +28,15 @@ const apiHash = process.env.apiHash;
 const stringSession = new StringSession("");
 
 /*-----------Settings-----------*/
-const CoinMarketCapCoinGeckoChannel = 1517585345;
+const CoinMarketCapCoinGeckoChannel = 1485440208;
 
 
-var numberOfTokensToBuy = 10; // number of tokens you want to buy
+var numberOfTokensToBuy = 3; // number of tokens you want to buy
 const autoSell = true;  // If you want to auto sell or not 
 
-const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
+const myGasPriceForApproval = ethers.utils.parseUnits('10', 'gwei');
 
-const myGasLimit = 1500000;
+const myGasLimit = 3000000;
 
 
 var BUYALLTOKENS = false; // if true it will buy all tokens without stategies, change to false to use the strategy filters
@@ -46,10 +46,10 @@ var BUYALLTOKENS = false; // if true it will buy all tokens without stategies, c
 const buyAllTokensStrategy = {
 
 	investmentAmount: '0.1', // Amount to invest per token in BNB
-	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
+	gasPrice: ethers.utils.parseUnits('10', 'gwei'),
 	profitPercent: 100,      // 100% profit
 	stopLossPercent: 10,  // 10% loss
-	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
+	percentOfTokensToSellProfit: 100, // sell 75% when profit is reached
 	percentOfTokensToSellLoss: 100, // sell 100% when stoploss is reached 
 	trailingStopLossPercent: 15 // 15% trailing stoploss
 }
@@ -67,8 +67,8 @@ const strategyLL =
 	profitPercent: 250,          // 2.5X
 	stopLossPercent: 30,        // 30% loss
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
-	gasPrice: ethers.utils.parseUnits('6', 'gwei'), // Gas Price. Higher is better for low liquidity
-	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
+	gasPrice: ethers.utils.parseUnits('10', 'gwei'), // Gas Price. Higher is better for low liquidity
+	percentOfTokensToSellProfit: 100, // sell 75% when profit is reached
 	percentOfTokensToSellLoss: 100,
 	trailingStopLossPercent: 10// sell 100% when stoploss is reached 
 }
@@ -83,7 +83,7 @@ const strategyML =
 	minLiquidity: 150, 	  	// min Liquidity BNB
 	profitPercent: 80,          // 80% profit
 	stopLossPercent: 20,        // 20% loss
-	platform: "COINGECKO",          // Either COINMARKETCAP or COINGECKO
+	platform: "COINMARKETCAP",          // Either COINMARKETCAP or COINGECKO
 	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
 	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
 	percentOfTokensToSellLoss: 100 // sell 100% when stoploss is reached 
@@ -100,9 +100,10 @@ const strategyHL =
 	profitPercent: 50,          // 50% profit
 	stopLossPercent: 10,        // 10% loss
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
-	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
-	percentOfTokensToSellProfit: 75, // sell 75% of tokens when profit is reached
-	percentOfTokensToSellLoss: 100 // sell 100% of tokens when stoploss is reached 
+	gasPrice: ethers.utils.parseUnits('10', 'gwei'),
+	percentOfTokensToSellProfit: 100, // sell 75% of tokens when profit is reached
+	percentOfTokensToSellLoss: 100, // sell 100% of tokens when stoploss is reached
+	trailingStopLossPercent: 10// sell 100% when stoploss is reached 
 }
 const customStrategy = {
 	investmentAmount: '0.3', 	// Investment amount per token
@@ -113,9 +114,10 @@ const customStrategy = {
 	profitPercent: 50,          // 50% profit
 	stopLossPercent: 10,        // 10% loss
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
-	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
-	percentOfTokensToSellProfit: 75, // sell 75% of tokens when profit is reached
-	percentOfTokensToSellLoss: 100 // sell 100% of tokens when stoploss is reached 
+	gasPrice: ethers.utils.parseUnits('10', 'gwei'),
+	percentOfTokensToSellProfit: 100, // sell 75% of tokens when profit is reached
+	percentOfTokensToSellLoss: 100, // sell 100% of tokens when stoploss is reached
+	trailingStopLossPercent: 10// sell 100% when stoploss is reached 
 }
 /*-----------End Settings-----------*/
 
@@ -418,18 +420,9 @@ async function onNewMessage(event) {
 			if (ethers.utils.isAddress(msg[i])) {
 				address = msg[i];
 			}
-			if (msg[i] == "BNB") {
-				var liquidity = parseFloat(msg[i - 1]);
+			if (msg[i] == "(BNP20)") {
+				var liquidity = 100;
 				console.log('Liquidity:', liquidity, 'BNB');
-			}
-			if (msg[i] == "(buy)") {
-				var slipBuy = parseInt(msg[i - 1]);
-				console.log('Buy tax: ', slipBuy, '%');
-			}
-			if (msg[i] == "(sell)") {
-				var slipSell = parseInt(msg[i - 1]);
-				console.log('Sell tax:', slipSell, '%');
-				console.log('--- --------------- ---');
 			}
 		}
 		if (BUYALLTOKENS == false) {

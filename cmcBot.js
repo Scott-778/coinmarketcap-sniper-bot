@@ -257,7 +257,7 @@ async function sell(tokenObj, isProfit) {
 
 		const tx = await pancakeRouter.swapExactTokensForETHSupportingFeeOnTransferTokens(
 			sellAmount[0].toString(),
-			sellAmountsOutMin,
+			0,
 			tokenObj.sellPath,
 			addresses.recipient,
 			Math.floor(Date.now() / 1000) + 60 * 3, {

@@ -63,8 +63,8 @@ const strategyLL =
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
 	gasPrice: ethers.utils.parseUnits('6', 'gwei'), // Gas Price. Higher is better for low liquidity
 	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
-	percentOfTokensToSellLoss: 100,
-	trailingStopLossPercent: 10// sell 100% when stoploss is reached 
+	percentOfTokensToSellLoss: 100, // sell 100% when stoploss is reached 
+	trailingStopLossPercent: 10 // % trailing stoploss
 }
 
 /* Strategy for buying medium-liquid tokens (ML) */
@@ -81,7 +81,8 @@ const strategyML =
 	platform: "COINMARKETCAP",          // Either COINMARKETCAP or COINGECKO
 	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
 	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
-	percentOfTokensToSellLoss: 100 // sell 100% when stoploss is reached 
+	percentOfTokensToSellLoss: 100 // sell 100% when stoploss is reached
+	trailingStopLossPercent: 10 // % trailing stoploss
 }
 
 /* Strategy for buying high-liquid tokens (HL)*/
@@ -98,7 +99,8 @@ const strategyHL =
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
 	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
 	percentOfTokensToSellProfit: 75, // sell 75% of tokens when profit is reached
-	percentOfTokensToSellLoss: 100 // sell 100% of tokens when stoploss is reached 
+	percentOfTokensToSellLoss: 100 // sell 100% of tokens when stoploss is reached
+	trailingStopLossPercent: 10 // % trailing stoploss
 }
 /* Custom Strategy  (Custom) */
 const customStrategy = {
@@ -113,7 +115,8 @@ const customStrategy = {
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
 	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
 	percentOfTokensToSellProfit: 75, // sell 75% of tokens when profit is reached
-	percentOfTokensToSellLoss: 100 // sell 100% of tokens when stoploss is reached 
+	percentOfTokensToSellLoss: 100 // sell 100% of tokens when stoploss is reached
+	trailingStopLossPercent: 10 // % trailing stoploss
 }
 
 /*-----------End Settings-----------*/

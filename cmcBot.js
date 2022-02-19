@@ -63,8 +63,8 @@ const strategyLL =
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
 	gasPrice: ethers.utils.parseUnits('6', 'gwei'), // Gas Price. Higher is better for low liquidity
 	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
-	percentOfTokensToSellLoss: 100,
-	trailingStopLossPercent: 10// sell 100% when stoploss is reached 
+	percentOfTokensToSellLoss: 100, // sell 100% when stoploss is reached 
+	trailingStopLossPercent: 10 // % trailing stoploss
 }
 
 /* Strategy for buying medium-liquid tokens (ML) */
@@ -81,7 +81,8 @@ const strategyML =
 	platform: "COINMARKETCAP",          // Either COINMARKETCAP or COINGECKO
 	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
 	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
-	percentOfTokensToSellLoss: 100 // sell 100% when stoploss is reached 
+	percentOfTokensToSellLoss: 100 // sell 100% when stoploss is reached
+	trailingStopLossPercent: 10 // % trailing stoploss
 }
 
 /* Strategy for buying high-liquid tokens (HL)*/
@@ -98,7 +99,8 @@ const strategyHL =
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
 	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
 	percentOfTokensToSellProfit: 75, // sell 75% of tokens when profit is reached
-	percentOfTokensToSellLoss: 100 // sell 100% of tokens when stoploss is reached 
+	percentOfTokensToSellLoss: 100 // sell 100% of tokens when stoploss is reached
+	trailingStopLossPercent: 10 // % trailing stoploss
 }
 /* Custom Strategy  (Custom) */
 const customStrategy = {
@@ -113,7 +115,8 @@ const customStrategy = {
 	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
 	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
 	percentOfTokensToSellProfit: 75, // sell 75% of tokens when profit is reached
-	percentOfTokensToSellLoss: 100 // sell 100% of tokens when stoploss is reached 
+	percentOfTokensToSellLoss: 100 // sell 100% of tokens when stoploss is reached
+	trailingStopLossPercent: 10 // % trailing stoploss
 }
 
 /*-----------End Settings-----------*/
@@ -508,9 +511,17 @@ async function onNewMessage(event) {
 		console.log(timeStamp);
 		const msg = message.message.replace(/\n/g, " ").split(" ");
 		var address = '';
+		if (msg.includes("COINMARKETCAP")) {
+			console.log('Platform: COINMARKETCAP');
+		}
+		if (msg.includes("COINGECKO")) {
+			console.log('Platform: COINGECKO');
+		}
 		for (var i = 0; i < msg.length; i++) {
 			if (ethers.utils.isAddress(msg[i])) {
 				address = msg[i];
+				console.log('Contract:', address);
+				console.log('--- --------------- ---');
 			}
 			if (msg[i] == "BNB") {
 				var liquidity = parseFloat(msg[i - 1]);
@@ -523,7 +534,6 @@ async function onNewMessage(event) {
 			if (msg[i] == "(sell)") {
 				var slipSell = parseInt(msg[i - 1]);
 				console.log('Sell tax:', slipSell, '%');
-				console.log('--- --------------- ---');
 			}
 		}
 		// Buy low-liquid tokens
@@ -668,7 +678,7 @@ async function onNewMessage(event) {
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
 		} else {
-			console.log('--- Not buying this token does not match strategy or liquidity is not BNB ---', '\n');
+			console.log('Not buying this token does not match strategy or liquidity is not BNB. Waiting for telegram notification to buy...', '\n');
 		}
 	}
 }

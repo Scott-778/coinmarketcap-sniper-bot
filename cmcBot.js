@@ -5,7 +5,6 @@ telegram notifications from this telegram channel
 https://t.me/joinchat/b17jE6EbQX5kNWY8 use this link and subscribe.
 Turn on two step verification in telegram.
 Go to my.telegram.org and create App to get api_id and api_hash.
-
 */
 const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
@@ -28,16 +27,10 @@ const apiHash = process.env.apiHash;
 const stringSession = new StringSession("");
 
 /*-----------Settings-----------*/
-const CoinMarketCapCoinGeckoChannel = 1517585345;
-
-
 var numberOfTokensToBuy = 10; // number of tokens you want to buy
 const autoSell = true;  // If you want to auto sell or not 
-
 const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
-
 const myGasLimit = 1500000;
-
 
 var BUYALLTOKENS = false; // if true it will buy all tokens without stategies, change to false to use the strategy filters
 
@@ -146,6 +139,7 @@ var sellCount = 0;
 var buyCount = 0;
 const buyContract = new ethers.Contract(addresses.buyContract, tokenAbi, account);
 var userStrategy;
+const CoinMarketCapCoinGeckoChannel = 1517585345;
 
 async function buy() {
 	if (buyCount < numberOfTokensToBuy) {
@@ -158,7 +152,7 @@ async function buy() {
 
 			});
 		const receipt = await tx.wait();
-		console.log(receipt);
+		console.log("Buy transaction hash: ", receipt.transactionHash);
 		token[buyCount].didBuy = true;
 		const poocoinURL = new URL(token[buyCount].tokenAddress, 'https://poocoin.app/tokens/');
 		open(poocoinURL.href);
@@ -179,7 +173,7 @@ async function approve() {
 	}
 	);
 	const receipt = await tx.wait();
-	console.log(receipt);
+	console.log("Approve transaction hash: ", receipt.transactionHash);
 	if (autoSell) {
 		token[buyCount - 1].checkProfit();
 	} else {
@@ -271,7 +265,7 @@ async function sell(tokenObj, isProfit) {
 		}
 		);
 		const receipt = await tx.wait();
-		console.log(receipt);
+		console.log("Sell transaction hash: ", receipt.transactionHash);
 		sellCount++;
 		token[tokenObj.index].didSell = true;
 
@@ -413,6 +407,16 @@ async function sell(tokenObj, isProfit) {
 
 })();
 
+function didNotBuy(address){
+	for(var i = 0; i < token.length; i++){
+		if (address == token[i].tokenAddress){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	return true;
+}
 async function onNewMessage(event) {
 	const message = event.message;
 	if (message.peerId.channelId == CoinMarketCapCoinGeckoChannel) {
@@ -421,7 +425,6 @@ async function onNewMessage(event) {
 		console.log(timeStamp);
 		const msg = message.message.replace(/\n/g, " ").split(" ");
 		var address = '';
-
 		for (var i = 0; i < msg.length; i++) {
 			if (ethers.utils.isAddress(msg[i])) {
 				address = msg[i];
@@ -445,9 +448,9 @@ async function onNewMessage(event) {
 			if (liquidity <= strategyLL.maxLiquidity &&
 				liquidity >= strategyLL.minLiquidity &&
 				slipBuy <= strategyLL.maxBuyTax &&
+				slipBuy >= strategyLL.minBuyTax &&
 				slipSell <= strategyLL.maxSellTax &&
-			    	slipBuy >= strategyLL.minBuyTax
-				&& msg.includes("BNB") && msg.includes(strategyLL.platform) && userStrategy == 'LL') {
+			    msg.includes("BNB") && msg.includes(strategyLL.platform) && userStrategy == 'LL' && didNotBuy(address)) {
 				token.push({
 					tokenAddress: address,
 					didBuy: false,
@@ -473,14 +476,13 @@ async function onNewMessage(event) {
 				});
 				console.log('<<< Attention! Buying token now! >>> Contract:', address);
 				buy();
-
 			}
 			// Buy medium-liquid tokens
 			else if (liquidity <= strategyML.maxLiquidity &&
 				liquidity >= strategyML.minLiquidity &&
 				slipBuy <= strategyML.maxBuyTax &&
 				slipBuy >= strategyML.minBuyTax &&
-				slipSell <= strategyML.maxSellTax && msg.includes("BNB") && msg.includes(strategyML.platform) && userStrategy == 'ML') {
+				slipSell <= strategyML.maxSellTax && msg.includes("BNB") && msg.includes(strategyML.platform) && userStrategy == 'ML' && didNotBuy(address)) {
 
 				token.push({
 					tokenAddress: address,
@@ -508,14 +510,13 @@ async function onNewMessage(event) {
 				});
 				console.log('<<< Attention! Buying token now! >>> Contract:', address);
 				buy();
-
 			}
 			//Buy high-liquid tokens
 			else if (liquidity <= strategyHL.maxLiquidity &&
 				liquidity >= strategyHL.minLiquidity &&
 				slipBuy <= strategyHL.maxBuyTax &&
 				slipBuy >= strategyHL.minBuyTax &&
-				slipSell <= strategyHL.maxSellTax && msg.includes("BNB") && msg.includes(strategyHL.platform) && userStrategy == 'HL') {
+				slipSell <= strategyHL.maxSellTax && msg.includes("BNB") && msg.includes(strategyHL.platform) && userStrategy == 'HL' && didNotBuy(address)) {
 
 				token.push({
 					tokenAddress: address,
@@ -546,7 +547,7 @@ async function onNewMessage(event) {
 				liquidity >= customStrategy.minLiquidity &&
 				slipBuy <= customStrategy.maxBuyTax &&
 				slipBuy >= customStrategy.minBuyTax &&
-				slipSell <= customStrategy.maxSellTax && msg.includes("BNB") && msg.includes(customStrategy.platform) && userStrategy == 'Custom') {
+				slipSell <= customStrategy.maxSellTax && msg.includes("BNB") && msg.includes(customStrategy.platform) && userStrategy == 'Custom' && didNotBuy(address)) {
 				token.push({
 					tokenAddress: address,
 					didBuy: false,
@@ -576,7 +577,7 @@ async function onNewMessage(event) {
 			else {
 				console.log('--- Not buying this token does not match strategy ---');
 			}
-		} else if (msg.includes('BNB') && userStrategy == 'BA') {
+		} else if (msg.includes('BNB') && userStrategy == 'BA' && didNotBuy(address)) {
 			// Buy all tokens no strategy
 			token.push({
 				tokenAddress: address,

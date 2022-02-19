@@ -556,7 +556,7 @@ async function onNewMessage(event) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: strategyLL.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: strategyLL.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: 0,
+				initialTrailingStopLossPercent: strategyLL.trailingStopLossPercent,
 				trailingStopLossPercent: strategyLL.trailingStopLossPercent,
 				stopLoss: 0,
 				intitialValue: 0
@@ -584,7 +584,7 @@ async function onNewMessage(event) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: strategyML.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: strategyML.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: 0,
+				initialTrailingStopLossPercent: strategyML.trailingStopLossPercent,
 				trailingStopLossPercent: strategyML.trailingStopLossPercent,
 				stopLoss: 0,
 				intitialValue: 0
@@ -613,7 +613,7 @@ async function onNewMessage(event) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: strategyHL.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: strategyHL.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: 0,
+				initialTrailingStopLossPercent: strategyHL.trailingStopLossPercent,
 				trailingStopLossPercent: strategyHL.trailingStopLossPercent,
 				stopLoss: 0,
 				intitialValue: 0
@@ -642,7 +642,7 @@ async function onNewMessage(event) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: customStrategy.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: customStrategy.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: 0,
+				initialTrailingStopLossPercent: customStrategy.trailingStopLossPercent,
 				trailingStopLossPercent: customStrategy.trailingStopLossPercent,
 				stopLoss: 0,
 				intitialValue: 0
@@ -670,7 +670,7 @@ async function onNewMessage(event) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: buyAllTokensStrategy.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: buyAllTokensStrategy.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: 0,
+				initialTrailingStopLossPercent: buyAllTokensStrategy.trailingStopLossPercent,
 				trailingStopLossPercent: buyAllTokensStrategy.trailingStopLossPercent,
 				stopLoss: 0,
 				intitialValue: 0

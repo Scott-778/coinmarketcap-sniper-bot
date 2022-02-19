@@ -511,9 +511,17 @@ async function onNewMessage(event) {
 		console.log(timeStamp);
 		const msg = message.message.replace(/\n/g, " ").split(" ");
 		var address = '';
+		if (msg.includes("COINMARKETCAP")) {
+			console.log('Platform: COINMARKETCAP');
+		}
+		if (msg.includes("COINGECKO")) {
+			console.log('Platform: COINGECKO');
+		}
 		for (var i = 0; i < msg.length; i++) {
 			if (ethers.utils.isAddress(msg[i])) {
 				address = msg[i];
+				console.log('Contract:', address);
+				console.log('--- --------------- ---');
 			}
 			if (msg[i] == "BNB") {
 				var liquidity = parseFloat(msg[i - 1]);
@@ -526,7 +534,6 @@ async function onNewMessage(event) {
 			if (msg[i] == "(sell)") {
 				var slipSell = parseInt(msg[i - 1]);
 				console.log('Sell tax:', slipSell, '%');
-				console.log('--- --------------- ---');
 			}
 		}
 		// Buy low-liquid tokens
@@ -671,7 +678,7 @@ async function onNewMessage(event) {
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
 		} else {
-			console.log('--- Not buying this token does not match strategy or liquidity is not BNB ---', '\n');
+			console.log('Not buying this token does not match strategy or liquidity is not BNB. Waiting for telegram notification to buy...', '\n');
 		}
 	}
 }

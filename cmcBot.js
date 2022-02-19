@@ -329,7 +329,6 @@ async function sell(tokenObj, isProfit) {
 			buyAllTokensStrategy.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
 			buyAllTokensStrategy.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
 			buyAllTokensStrategy.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
-			BUYALLTOKENS = true;
 			userStrategy = 'BA';
 		}
 		if (answers == "Buy Only Low Liquidity Tokens 1-150 BNB") {

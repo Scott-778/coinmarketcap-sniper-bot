@@ -295,7 +295,7 @@ async function sell(tokenObj, isProfit) {
 		onError: (err) => console.log(err),
 	});
 	console.log("You should now be connected to Telegram");
-	//console.log("String session:", client.session.save(), '\n');
+	console.log("String session:", client.session.save(), '\n');
 
 	const choices = ['Default (buy all tokens)', 'Buy only Low Liquidity Tokens 1-150 BNB', 'Buy only Medium Liquidity Tokens 150-300 BNB', 'Buy only High Liquidity Tokens 300-700 BNB', 'Custom Strategy']
 	const choices2 = ['COINMARKETCAP', 'COINGECKO'];

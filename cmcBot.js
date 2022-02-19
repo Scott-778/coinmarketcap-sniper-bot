@@ -228,15 +228,13 @@ async function checkForProfit(token) {
 		let stopLossTrailing = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.trailingStopLossPercent / 100 - token.tokenSellTax / 100) + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString());
 		let stopLoss = token.stopLoss;
 
-		console.log(ethers.utils.formatUnits(stopLossTrailing));
 		if (currentValue.gt(stopLossTrailing) && token.trailingStopLossPercent > 0) {
 			setStopLossTrailing(token, stopLossTrailing);
-			console.log(true, token.trailingStopLossPercent);
 		}
 		let timeStamp = new Date().toLocaleString();
 		const enc = (s) => new TextEncoder().encode(s);
-		process.stdout.write(enc(`${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(stopLoss)}  \r`));
-		//console.log(`${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(token.stopLoss)} `);
+		//process.stdout.write(enc(`${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(stopLoss)} \r`));
+		console.log(`${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(token.stopLoss)}`);
 		if (currentValue.gte(profitDesired)) {
 			if (buyCount <= numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
 				sellAttempts++;
@@ -682,5 +680,3 @@ async function onNewMessage(event) {
 		}
 	}
 }
-
-

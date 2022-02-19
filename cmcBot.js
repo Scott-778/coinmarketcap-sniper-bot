@@ -60,8 +60,9 @@ const buyAllTokensStrategy = {
 const strategyLL =
 {
 	investmentAmount: '0.12', 	// Investment amount per token
-	maxBuyTax: 10,            // max buy slippage
-	maxSellTax: 10,			// max sell slippage
+	maxBuyTax: 10, 			// max buy tax
+	minBuyTax: 0 ,			// min buy tax
+	maxSellTax: 10,			// max sell tax
 	maxLiquidity: 150,	        // max Liquidity BNB
 	minLiquidity: 1, 	  	// min Liquidity BNB
 	profitPercent: 250,          // 2.5X
@@ -77,8 +78,9 @@ const strategyLL =
 const strategyML =
 {
 	investmentAmount: '0.2', 	// Investment amount per token
-	maxBuyTax: 11,            // max buy slippage
-	maxSellTax: 11,			// max sell slippage
+	maxBuyTax: 11,           	 // max buy tax
+	minBuyTax: 0,			// min buy tax
+	maxSellTax: 11,			// max sell tax
 	maxLiquidity: 300,	        // max Liquidity BNB
 	minLiquidity: 150, 	  	// min Liquidity BNB
 	profitPercent: 80,          // 80% profit
@@ -93,8 +95,9 @@ const strategyML =
 const strategyHL =
 {
 	investmentAmount: '0.2', 	// Investment amount per token
-	maxBuyTax: 11,            // max buy slippage
-	maxSellTax: 11,			// max sell slippage
+	maxBuyTax: 11,            	// max buy tax
+	minBuyTax: 0,			// min buy tax
+	maxSellTax: 11,			// max sell tax
 	maxLiquidity: 700,	   	// max Liquidity BNB
 	minLiquidity: 300, 	  	// min Liquidity BNB
 	profitPercent: 50,          // 50% profit
@@ -106,8 +109,9 @@ const strategyHL =
 }
 const customStrategy = {
 	investmentAmount: '0.3', 	// Investment amount per token
-	maxBuyTax: 11,            // max buy slippage
-	maxSellTax: 11,			// max sell slippage
+	maxBuyTax: 11,            	// max buy tax
+	minBuyTax: 0,			// min buy tax
+	maxSellTax: 11,			// max sell tax
 	maxLiquidity: 1000,	   	// max Liquidity BNB
 	minLiquidity: 250, 	  	// min Liquidity BNB
 	profitPercent: 50,          // 50% profit
@@ -311,6 +315,7 @@ async function sell(tokenObj, isProfit) {
 			strategyLL.investmentAmount = await input.text("Enter Investment Amount in BNB");
 			strategyLL.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
 			strategyLL.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
+			strategyLL.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
 			strategyLL.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
 			strategyLL.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
 			strategyLL.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
@@ -333,6 +338,7 @@ async function sell(tokenObj, isProfit) {
 			strategyML.investmentAmount = await input.text("Enter Investment Amount in BNB");
 			strategyML.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
 			strategyML.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
+			strategyML.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
 			strategyML.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
 			strategyML.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
 			strategyML.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
@@ -356,6 +362,7 @@ async function sell(tokenObj, isProfit) {
 			strategyHL.investmentAmount = await input.text("Enter Investment Amount in BNB");
 			strategyHL.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
 			strategyHL.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
+			strategyHL.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
 			strategyHL.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
 			strategyHL.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
 			strategyHL.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
@@ -380,6 +387,7 @@ async function sell(tokenObj, isProfit) {
 			customStrategy.minLiquidity = parseFloat(await input.text("Enter minimum liquidity"));
 			customStrategy.maxLiquidity = parseFloat(await input.text("Enter maximum liquidity"));
 			customStrategy.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
+			customStrategy.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
 			customStrategy.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
 			customStrategy.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
 			customStrategy.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
@@ -437,7 +445,8 @@ async function onNewMessage(event) {
 			if (liquidity <= strategyLL.maxLiquidity &&
 				liquidity >= strategyLL.minLiquidity &&
 				slipBuy <= strategyLL.maxBuyTax &&
-				slipSell <= strategyLL.maxSellTax
+				slipSell <= strategyLL.maxSellTax &&
+			    	slipBuy >= strategyLL.minBuyTax
 				&& msg.includes("BNB") && msg.includes(strategyLL.platform) && userStrategy == 'LL') {
 				token.push({
 					tokenAddress: address,
@@ -470,6 +479,7 @@ async function onNewMessage(event) {
 			else if (liquidity <= strategyML.maxLiquidity &&
 				liquidity >= strategyML.minLiquidity &&
 				slipBuy <= strategyML.maxBuyTax &&
+				slipBuy >= strategyML.minBuyTax &&
 				slipSell <= strategyML.maxSellTax && msg.includes("BNB") && msg.includes(strategyML.platform) && userStrategy == 'ML') {
 
 				token.push({
@@ -504,6 +514,7 @@ async function onNewMessage(event) {
 			else if (liquidity <= strategyHL.maxLiquidity &&
 				liquidity >= strategyHL.minLiquidity &&
 				slipBuy <= strategyHL.maxBuyTax &&
+				slipBuy >= strategyHL.minBuyTax &&
 				slipSell <= strategyHL.maxSellTax && msg.includes("BNB") && msg.includes(strategyHL.platform) && userStrategy == 'HL') {
 
 				token.push({
@@ -534,6 +545,7 @@ async function onNewMessage(event) {
 			} else if (liquidity <= customStrategy.maxLiquidity &&
 				liquidity >= customStrategy.minLiquidity &&
 				slipBuy <= customStrategy.maxBuyTax &&
+				slipBuy >= customStrategy.minBuyTax &&
 				slipSell <= customStrategy.maxSellTax && msg.includes("BNB") && msg.includes(customStrategy.platform) && userStrategy == 'Custom') {
 				token.push({
 					tokenAddress: address,

@@ -1,5 +1,5 @@
 
-<p align="center"><a href="https://github.com/Scott-778/coinmarketcap-sniperbot"><img src="https://user-images.githubusercontent.com/91510798/154882018-b73e2851-da99-40d1-8ef7-3efbf692797f.PNG" alt="Logo" height="100"/></a></p>
+<p align="center"><a href="https://github.com/Scott-778/coinmarketcap-sniperbot"><img src="https://user-images.githubusercontent.com/91510798/154883961-d44afca1-382d-4365-a9db-4278ca720cba.PNG" alt="Logo" height="100"/></a></p>
 <h1 align="center">CoinMarketCap Sniper Bot</h1>
 <p align="center">Sniper bot to buy new tokens listed on CoinMarketCap.</p>
 

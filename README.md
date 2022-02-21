@@ -57,3 +57,6 @@ Join my telegram group where we can talk about this project, tokens and the best
 
 ## Contribute
 If you can code and want to make this project better please feel free to contribute.
+## Supporters
+[![Stargazers repo roster for @Scott-778/coinmarketcap-sniperbot](https://reporoster.com/stars/Scott-778/coinmarketcap-sniperbot)](https://github.com/Scott-778/coinmarketcap-sniperbot/stargazers)
+

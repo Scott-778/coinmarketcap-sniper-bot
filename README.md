@@ -1,4 +1,4 @@
-# coinmarketcap-new-listings-sniper-bot
+# coinmarketcap-sniperbot
 Coinmarketcap new listings sniper bot that buys BSC tokens when you recieve Telegram notification from this channel  
 https://t.me/joinchat/b17jE6EbQX5kNWY8 use this link and subscribe. 
 Use at your own risk. Investing in cryptocurrency is risky. This is not financial advice.

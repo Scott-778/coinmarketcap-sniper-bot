@@ -1,6 +1,7 @@
+
+<p align="center"><a href="https://github.com/Scott-778/coinmarketcap-sniperbot"><img src="https://user-images.githubusercontent.com/91510798/154882018-b73e2851-da99-40d1-8ef7-3efbf692797f.PNG" alt="Logo" height="90"/></a></p>
 <h1 align="center">CoinMarketCap Sniper Bot</h1>
 <p align="center">Sniper bot to buy new tokens listed on CoinMarketCap.</p>
-
 
 
 ## Getting Started
@@ -46,8 +47,6 @@ This strategy buys any token within your own custom settings. You can set you ow
 
 ## Screenshots
 ![ghss3](https://user-images.githubusercontent.com/91510798/154159554-cd6a2d3a-c0ca-4710-9c10-b0fe388467a1.png)
-
-
 ![ghss2](https://user-images.githubusercontent.com/91510798/154159575-bdebb6cb-b81d-4567-8733-3dca4ae743d6.png)
 ## Features coming soon
 Soon I will add support for different Telegram channels.

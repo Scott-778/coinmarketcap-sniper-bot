@@ -1,21 +1,24 @@
-# coinmarketcap-sniperbot
-Coinmarketcap new listings sniper bot that buys BSC tokens when you recieve Telegram notification from this channel  
-https://t.me/joinchat/b17jE6EbQX5kNWY8 use this link and subscribe. 
+<h1 align="center">CoinMarketCap Sniper Bot</h1>
+<p align="center">Sniper bot to buy new tokens listed on CoinMarketCap.</p>
+
+
+
+## Getting Started
+CoinMarketCap sniper bot that buys BSC tokens when you recieve Telegram notification from this channel https://t.me/joinchat/b17jE6EbQX5kNWY8 use this link and subscribe. 
 Use at your own risk. Investing in cryptocurrency is risky. This is not financial advice.
 There is a small 0.7% buying fee per buy. This is to help me buy a cup of coffee and support for this project. 
 If you have an issue please don't post screenshots with personal information like seed phrase, telephone number, Telegram code, Telegram two factor password, or Telegram string session. Please keep that information private!
 This bot uses Smart Chain BNB to buy tokens not WBNB.
 
-## Getting Started
 First, if you don't have node.js installed go to nodejs.org and install the lastest LTS version.
 Then go to my.telegram.org and create an app to get apiID and apiHash.
 Then subscribe to this channel on Telegram https://t.me/joinchat/b17jE6EbQX5kNWY8.
 Then Use the following commands either in VScode or command prompt 
 ```
-git clone https://github.com/Scott-778/coinmarketcap-new-listings-sniper-bot.git
+git clone https://github.com/Scott-778/coinmarketcap-sniperbot.git
 ```
 ```
-cd coinmarketcap-new-listings-sniper-bot
+cd coinmarketcap-sniperbot
 ```
 ```
 npm install
@@ -31,15 +34,15 @@ When bot is running it it will ask for your telephone number to log in to Telegr
 
 ## Strategies
 #### Default strategy: 
-This strategy buys all CoinmarketCap token and CoinGecko tokens no tax limit and no liquidity limit.
+This strategy buys all CoinmarketCap token and CoinGecko tokens no tax limit and no liquidity limit. High risk.
 #### Low liquidity strategy: 
-This strategy buys all low liquid tokens 1-150 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko.
+This strategy buys all low liquid tokens 1-150 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko. High risk.
 #### Medium liquidity strategy:
-This strategy buys all medium liquid tokens 150-300 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko.
+This strategy buys all medium liquid tokens 150-300 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko. Medium risk.
 #### High liquidity strategy:
 This strategy buys all high liquid tokens 300-700 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko.
 #### Custom strategy:
-This strategy buys any token within your own custom settings. You can set you own liquidity and tax limits.Choose either CoinMarketCap or CoinGecko.
+This strategy buys any token within your own custom settings. You can set you own liquidity and tax limits.Choose either CoinMarketCap or CoinGecko. Low risk.
 
 ## Screenshots
 ![ghss3](https://user-images.githubusercontent.com/91510798/154159554-cd6a2d3a-c0ca-4710-9c10-b0fe388467a1.png)

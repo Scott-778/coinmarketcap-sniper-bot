@@ -6,13 +6,14 @@ https://t.me/joinchat/b17jE6EbQX5kNWY8 use this link and subscribe.
 Turn on two step verification in telegram.
 Go to my.telegram.org and create App to get api_id and api_hash.
 */
-const { TelegramClient } = require("telegram");
+const {Api, TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
 const input = require("input");
 const { NewMessage } = require('telegram/events');
 const ethers = require('ethers');
 const open = require('open');
 require('dotenv').config();
+const fs = require('fs');
 
 const addresses = {
 	WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
@@ -144,6 +145,7 @@ var sellCount = 0;
 var buyCount = 0;
 const buyContract = new ethers.Contract(addresses.buyContract, tokenAbi, account);
 const CoinMarketCapCoinGeckoChannel = 1517585345;
+var dontBuyTheseTokens;
 
 /**
  * 
@@ -165,6 +167,21 @@ async function buy() {
 		token[buyCount].didBuy = true;
 		const poocoinURL = new URL(token[buyCount].tokenAddress, 'https://poocoin.app/tokens/');
 		open(poocoinURL.href);
+		fs.readFile('tokensBought.json', 'utf8', function readFileCallback(err, data) {
+            if (err) {
+
+            } else {
+                var obj = JSON.parse(data);
+                obj.tokens.push({ address: token[buyCount].tokenAddress });
+                json = JSON.stringify(obj, null, 4);
+                fs.writeFile('tokensBought.json', json, 'utf8', function (err) {
+                    if (err) throw err;
+
+                });
+
+
+            }
+        });
 		buyCount++;
 		approve();
 	}
@@ -302,7 +319,7 @@ async function sell(tokenObj, isProfit) {
 
 /**
  * 
- * Configure Strategies User Input
+ * Dont change code below change settings above
  * 
  * */
 (async () => {
@@ -329,6 +346,7 @@ async function sell(tokenObj, isProfit) {
 			buyAllTokensStrategy.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
 			buyAllTokensStrategy.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
 			buyAllTokensStrategy.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
+			BUYALLTOKENS = true;
 			userStrategy = 'BA';
 		}
 		if (answers == "Buy Only Low Liquidity Tokens 1-150 BNB") {
@@ -425,10 +443,12 @@ async function sell(tokenObj, isProfit) {
 		}
 
 	});
-
+	let raw = fs.readFileSync('tokensBought.json');
+    let tokensBought = JSON.parse(raw);
+    dontBuyTheseTokens = tokensBought.tokens;
 	client.addEventHandler(onNewMessage, new NewMessage({}));
 	console.log('\n', "Waiting for telegram notification to buy...");
-
+	
 })();
 
 /**
@@ -437,14 +457,14 @@ async function sell(tokenObj, isProfit) {
  * 
  * */
 function didNotBuy(address) {
-	for (var i = 0; i < token.length; i++) {
-		if (address == token[i].tokenAddress) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	return true;
+	for (var j = 0; j < dontBuyTheseTokens.length; j++) {
+        if (address == dontBuyTheseTokens[j].address) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    return true;
 }
 
 function isStrategy(liquidity, buyTax, sellTax, msg, address) {

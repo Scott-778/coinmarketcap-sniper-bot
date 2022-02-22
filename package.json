@@ -2,8 +2,10 @@
   "dependencies": {
     "dotenv": "^16.0.0",
     "ethers": "^5.5.4",
+    "fs": "^0.0.1-security",
     "input": "^1.0.1",
     "open": "^8.4.0",
     "telegram": "2.4.6"
   }
 }
+

@@ -444,14 +444,24 @@ async function sell(tokenObj, isProfit) {
 		}
 
 	});
-	let raw = fs.readFileSync('tokensBought.json');
-    let tokensBought = JSON.parse(raw);
-    dontBuyTheseTokens = tokensBought.tokens;
+	let raw = await readFile('tokensBought.json'); 
+   	let tokensBought = JSON.parse(raw);
+    	dontBuyTheseTokens = tokensBought.tokens;
 	client.addEventHandler(onNewMessage, new NewMessage({}));
 	console.log('\n', "Waiting for telegram notification to buy...");
 	
 })();
 
+async function readFile(path) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(path, 'utf8', function (err, data) {
+        if (err) {
+          reject(err);
+        }
+        resolve(data);
+      });
+    });
+  }
 /**
  * 
  * Check Strategies
@@ -459,12 +469,10 @@ async function sell(tokenObj, isProfit) {
  * */
 function didNotBuy(address) {
 	for (var j = 0; j < dontBuyTheseTokens.length; j++) {
-        if (address == dontBuyTheseTokens[j].address) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+       		if (address == dontBuyTheseTokens[j].address) {
+            		return false;
+        	} 
+    	}
     return true;
 }
 

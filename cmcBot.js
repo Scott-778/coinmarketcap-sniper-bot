@@ -230,7 +230,8 @@ async function getCurrentValue(token) {
 }
 async function setStopLoss(token) {
 	token.intitialValue = await getCurrentValue(token);
-	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) - parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) * (token.stopLossPercent / 100)).toFixed(18).toString());
+	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) - parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) * (token.stopLossPercent / 100 - token.tokenSellTax / 100)).toFixed(18).toString());
+
 }
 function setStopLossTrailing(token, stopLossTrailing) {
 	token.trailingStopLossPercent += token.initialTrailingStopLossPercent;
@@ -245,7 +246,7 @@ async function checkForProfit(token) {
 		let currentValue = await getCurrentValue(token);
 		const takeProfit = (parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.profitPercent + token.tokenSellTax) / 100 + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString();
 		const profitDesired = ethers.utils.parseUnits(takeProfit);
-		let stopLossTrailing = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.trailingStopLossPercent / 100 - token.tokenSellTax / 100) + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString());
+		let stopLossTrailing = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.trailingStopLossPercent / 100 - token.tokenSellTax / 100 - token.stopLossPercent / 100) + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString());
 		let stopLoss = token.stopLoss;
 
 		if (currentValue.gt(stopLossTrailing) && token.trailingStopLossPercent > 0) {

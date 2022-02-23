@@ -120,9 +120,11 @@ const customStrategy = {
 	trailingStopLossPercent: 10 // % trailing stoploss
 }
 
+const node = 'https://bsc-dataseed.binance.org/'; // Go to moralis.io sign up for account and go to speedynodes BSC endpoints and paste Https url here 
+
 /*-----------End Settings-----------*/
 
-const node = 'https://bsc-dataseed.binance.org/';
+
 const wallet = new ethers.Wallet.fromMnemonic(mnemonic);
 const provider = new ethers.providers.JsonRpcProvider(node);
 const account = wallet.connect(provider);

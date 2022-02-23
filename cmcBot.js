@@ -167,22 +167,23 @@ async function buy() {
 		token[buyCount].didBuy = true;
 		const poocoinURL = new URL(token[buyCount].tokenAddress, 'https://poocoin.app/tokens/');
 		open(poocoinURL.href);
-		fs.readFile('tokensBought.json', 'utf8', function readFileCallback(err, data) {
-            if (err) {
 
-            } else {
-                var obj = JSON.parse(data);
-                obj.tokens.push({ address: token[buyCount].tokenAddress });
-                json = JSON.stringify(obj, null, 4);
-                fs.writeFile('tokensBought.json', json, 'utf8', function (err) {
-                    if (err) throw err;
-
-                });
-
-
-            }
-        });
 		buyCount++;
+		fs.readFile('tokensBought.json', 'utf8', function readFileCallback(err, data) {
+			if (err) {
+
+			} else {
+				var obj = JSON.parse(data);
+				obj.tokens.push({ address: token[buyCount - 1].tokenAddress });
+				json = JSON.stringify(obj, null, 4);
+				fs.writeFile('tokensBought.json', json, 'utf8', function (err) {
+					if (err) throw err;
+
+				});
+
+
+			}
+		});
 		approve();
 	}
 

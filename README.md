@@ -13,9 +13,10 @@ If you have an issue please don't post screenshots with personal information lik
 This bot uses Smart Chain BNB to buy tokens not WBNB.
 
 First, if you don't have node.js installed go to nodejs.org and install the lastest LTS version.
+install git https://git-scm.com/downloads, or you can just download zip file if you don't want to clone repository.
 Then go to my.telegram.org and create an app to get apiID and apiHash.
 Then subscribe to this channel on Telegram https://t.me/joinchat/b17jE6EbQX5kNWY8.
-Then Use the following commands either in VScode or command prompt 
+Then Use the following commands either in VScode terminal or command prompt 
 ```
 git clone https://github.com/Scott-778/coinmarketcap-sniperbot.git
 ```

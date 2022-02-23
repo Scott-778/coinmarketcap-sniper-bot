@@ -230,7 +230,7 @@ async function getCurrentValue(token) {
 }
 async function setStopLoss(token) {
 	token.intitialValue = await getCurrentValue(token);
-	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) - parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) * (token.stopLossPercent / 100 - token.tokenSellTax / 100)).toFixed(18).toString());
+	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) - parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) * (token.stopLossPercent / 100)).toFixed(18).toString());
 
 }
 function setStopLossTrailing(token, stopLossTrailing) {

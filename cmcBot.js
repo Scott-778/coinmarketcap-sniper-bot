@@ -120,7 +120,7 @@ const customStrategy = {
 	trailingStopLossPercent: 10 // % trailing stoploss
 }
 
-const node = 'https://bsc-dataseed.binance.org/'; // Go to moralis.io sign up for account and go to speedynodes BSC endpoints and paste Https url here 
+const node = process.env.node; // Go to moralis.io sign up for account and go to speedynodes BSC endpoints and paste Https url in .env file 
 
 /*-----------End Settings-----------*/
 

@@ -12,9 +12,10 @@ module.exports.myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei'); // 
 
 module.exports.myGasLimit = 1500000; // gas limit doesnt need to be changed if too low transaction will fail
 
-module.exports.userStrategy = 'LL'; // BA, LL, ML, HL or Custom.  // Choose your strategy
+module.exports.userStrategy = 'BA'; // BA, LL, ML, HL or Custom.  // Choose your strategy
 
-/* Strategy for buying all tokens (BA)*/
+
+/* Strategy for buying all tokens (BA) */
 module.exports.buyAllTokensStrategy = {
 
     investmentAmount: '0.1', // Amount to invest per token in BNB

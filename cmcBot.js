@@ -6,7 +6,7 @@ https://t.me/joinchat/b17jE6EbQX5kNWY8 use this link and subscribe.
 Turn on two step verification in telegram.
 Go to my.telegram.org and create App to get api_id and api_hash.
 */
-const {Api, TelegramClient } = require("telegram");
+const { Api, TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
 const input = require("input");
 const { NewMessage } = require('telegram/events');
@@ -14,6 +14,9 @@ const ethers = require('ethers');
 const open = require('open');
 require('dotenv').config();
 const fs = require('fs');
+const config = require('./config');
+
+/*-----------Default Settings-----------*/
 
 const addresses = {
 	WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
@@ -26,105 +29,7 @@ const mnemonic = process.env.mnemonic;
 const apiId = parseInt(process.env.apiId);
 const apiHash = process.env.apiHash;
 const stringSession = new StringSession(process.env.stringSession);
-
-/*-----------Default Settings-----------*/
-
-const numberOfTokensToBuy = 10; // number of tokens you want to buy
-const autoSell = true;  // If you want to auto sell or not 
-const myGasPriceForApproval = ethers.utils.parseUnits('6', 'gwei');
-const myGasLimit = 1500000;
-
-
-var userStrategy = 'BA'; // BA, LL, ML, HL or Custom.  // Chose your strategy
-
-
-/* Strategy for buying all tokens (BA)*/
-const buyAllTokensStrategy = {
-
-	investmentAmount: '0.1', // Amount to invest per token in BNB
-	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
-	profitPercent: 100,      // 100% profit
-	stopLossPercent: 10,  // 10% loss
-	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
-	percentOfTokensToSellLoss: 100, // sell 100% when stoploss is reached 
-	trailingStopLossPercent: 15 // 15% trailing stoploss
-}
-
-/* Strategy for buying low-liquid tokens (LL) */
-const strategyLL =
-{
-	investmentAmount: '0.1', 	// Investment amount per token
-	maxBuyTax: 10, 			// max buy tax
-	minBuyTax: 0,			// min buy tax
-	maxSellTax: 10,			// max sell tax
-	maxLiquidity: 150,	        // max Liquidity BNB
-	minLiquidity: 1, 	  	// min Liquidity BNB
-	profitPercent: 250,          // 2.5X
-	stopLossPercent: 30,        // 30% loss
-	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
-	gasPrice: ethers.utils.parseUnits('6', 'gwei'), // Gas Price. Higher is better for low liquidity
-	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
-	percentOfTokensToSellLoss: 100, // sell 100% when stoploss is reached 
-	trailingStopLossPercent: 10 // % trailing stoploss
-}
-
-/* Strategy for buying medium-liquid tokens (ML) */
-const strategyML =
-{
-	investmentAmount: '0.2', 	// Investment amount per token
-	maxBuyTax: 11,           	 // max buy tax
-	minBuyTax: 2,			// min buy tax
-	maxSellTax: 11,			// max sell tax
-	maxLiquidity: 300,	        // max Liquidity BNB
-	minLiquidity: 150, 	  	// min Liquidity BNB
-	profitPercent: 80,          // 80% profit
-	stopLossPercent: 20,        // 20% loss
-	platform: "COINMARKETCAP",          // Either COINMARKETCAP or COINGECKO
-	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
-	percentOfTokensToSellProfit: 75, // sell 75% when profit is reached
-	percentOfTokensToSellLoss: 100, // sell 100% when stoploss is reached
-	trailingStopLossPercent: 10 // % trailing stoploss
-}
-
-/* Strategy for buying high-liquid tokens (HL)*/
-const strategyHL =
-{
-	investmentAmount: '0.2', 	// Investment amount per token
-	maxBuyTax: 11,            	// max buy tax
-	minBuyTax: 0,			// min buy tax
-	maxSellTax: 11,			// max sell tax
-	maxLiquidity: 700,	   	// max Liquidity BNB
-	minLiquidity: 300, 	  	// min Liquidity BNB
-	profitPercent: 50,          // 50% profit
-	stopLossPercent: 10,        // 10% loss
-	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
-	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
-	percentOfTokensToSellProfit: 75, // sell 75% of tokens when profit is reached
-	percentOfTokensToSellLoss: 100, // sell 100% of tokens when stoploss is reached
-	trailingStopLossPercent: 10 // % trailing stoploss
-}
-/* Custom Strategy  (Custom) */
-const customStrategy = {
-	investmentAmount: '0.3', 	// Investment amount per token
-	maxBuyTax: 11,            	// max buy tax
-	minBuyTax: 0,			// min buy tax
-	maxSellTax: 11,			// max sell tax
-	maxLiquidity: 1000,	   	// max Liquidity BNB
-	minLiquidity: 250, 	  	// min Liquidity BNB
-	profitPercent: 50,          // 50% profit
-	stopLossPercent: 10,        // 10% loss
-	platform: "COINMARKETCAP",      // Either COINMARKETCAP or COINGECKO
-	gasPrice: ethers.utils.parseUnits('6', 'gwei'),
-	percentOfTokensToSellProfit: 75, // sell 75% of tokens when profit is reached
-	percentOfTokensToSellLoss: 100, // sell 100% of tokens when stoploss is reached
-	trailingStopLossPercent: 10 // % trailing stoploss
-}
-
-const node = process.env.node; // Go to moralis.io sign up for account and go to speedynodes BSC endpoints and paste Https url in .env file 
-
-/*-----------End Settings-----------*/
-
-
+const node = process.env.node;
 const wallet = new ethers.Wallet.fromMnemonic(mnemonic);
 const provider = new ethers.providers.JsonRpcProvider(node);
 const account = wallet.connect(provider);
@@ -155,13 +60,13 @@ var dontBuyTheseTokens;
  * 
  * */
 async function buy() {
-	if (buyCount < numberOfTokensToBuy) {
+	if (buyCount < config.numberOfTokensToBuy) {
 		const value = ethers.utils.parseUnits(token[buyCount].investmentAmount, 'ether').toString();
 		const tx = await buyContract.buyTokens(token[buyCount].tokenAddress, addresses.recipient,
 			{
 				value: value,
 				gasPrice: token[buyCount].gasPrice,
-				gasLimit: myGasLimit
+				gasLimit: config.myGasLimit
 
 			});
 		const receipt = await tx.wait();
@@ -169,7 +74,6 @@ async function buy() {
 		token[buyCount].didBuy = true;
 		const poocoinURL = new URL(token[buyCount].tokenAddress, 'https://poocoin.app/tokens/');
 		open(poocoinURL.href);
-
 		buyCount++;
 		fs.readFile('tokensBought.json', 'utf8', function readFileCallback(err, data) {
 			if (err) {
@@ -180,15 +84,11 @@ async function buy() {
 				json = JSON.stringify(obj, null, 4);
 				fs.writeFile('tokensBought.json', json, 'utf8', function (err) {
 					if (err) throw err;
-
 				});
-
-
 			}
 		});
 		approve();
 	}
-
 }
 /**
  * 
@@ -201,16 +101,16 @@ async function approve() {
 	const tx = await contract.approve(
 		pancakeRouter.address,
 		valueToApprove, {
-		gasPrice: myGasPriceForApproval,
+		gasPrice: config.myGasPriceForApproval,
 		gasLimit: 210000
 	}
 	);
 	const receipt = await tx.wait();
 	console.log("Approve transaction hash: ", receipt.transactionHash);
-	if (autoSell) {
+	if (config.autoSell) {
 		token[buyCount - 1].checkProfit();
 	} else {
-		if (buyCount == numberOfTokensToBuy) {
+		if (buyCount == config.numberOfTokensToBuy) {
 			process.exit();
 		}
 	}
@@ -234,7 +134,7 @@ async function setStopLoss(token) {
 }
 function setStopLossTrailing(token, stopLossTrailing) {
 	token.trailingStopLossPercent += token.initialTrailingStopLossPercent;
-	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.trailingStopLossPercent / 100 - token.tokenSellTax /100) + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString());;
+	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.trailingStopLossPercent / 100 - token.tokenSellTax / 100) + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString());;
 }
 
 async function checkForProfit(token) {
@@ -245,7 +145,7 @@ async function checkForProfit(token) {
 		let currentValue = await getCurrentValue(token);
 		const takeProfit = (parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.profitPercent + token.tokenSellTax) / 100 + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString();
 		const profitDesired = ethers.utils.parseUnits(takeProfit);
-		let stopLossTrailing = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.trailingStopLossPercent / 100 + token.tokenSellTax /100) + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString());
+		let stopLossTrailing = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.trailingStopLossPercent / 100 + token.tokenSellTax / 100) + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString());
 		let stopLoss = token.stopLoss;
 		if (currentValue.gt(stopLossTrailing) && token.trailingStopLossPercent > 0) {
 			setStopLossTrailing(token, stopLossTrailing);
@@ -256,7 +156,7 @@ async function checkForProfit(token) {
 		//process.stdout.write(enc(`${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(stopLoss)} \r`));
 		console.log(`${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(token.stopLoss)}`);
 		if (currentValue.gte(profitDesired)) {
-			if (buyCount <= numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
+			if (buyCount <= config.numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
 				sellAttempts++;
 				console.log("Selling", tokenName, "now profit target reached", "\n");
 				sell(token, true);
@@ -265,7 +165,7 @@ async function checkForProfit(token) {
 		}
 
 		if (currentValue.lte(stopLoss)) {
-			if (buyCount <= numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
+			if (buyCount <= config.numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
 				sellAttempts++;
 				console.log("Selling", tokenName, "now stoploss reached", "\n");
 				sell(token, false);
@@ -300,8 +200,8 @@ async function sell(tokenObj, isProfit) {
 			tokenObj.sellPath,
 			addresses.recipient,
 			Math.floor(Date.now() / 1000) + 60 * 3, {
-			gasPrice: myGasPriceForApproval,
-			gasLimit: myGasLimit,
+			gasPrice: config.myGasPriceForApproval,
+			gasLimit: config.myGasLimit,
 
 		}
 		);
@@ -310,7 +210,7 @@ async function sell(tokenObj, isProfit) {
 		sellCount++;
 		token[tokenObj.index].didSell = true;
 
-		if (sellCount == numberOfTokensToBuy) {
+		if (sellCount == config.numberOfTokensToBuy) {
 			console.log("All tokens sold");
 			process.exit();
 		}
@@ -321,7 +221,7 @@ async function sell(tokenObj, isProfit) {
 
 /**
  * 
- * Dont change code below change settings above
+ * Configure Strategies User Input
  * 
  * */
 (async () => {
@@ -337,132 +237,132 @@ async function sell(tokenObj, isProfit) {
 	console.log("You should now be connected to Telegram");
 	console.log("String session:", client.session.save(), '\n');
 
-	const choices = ['Default','Buy All Tokens', 'Buy Only Low Liquidity Tokens 1-150 BNB', 'Buy Only Medium Liquidity Tokens 150-300 BNB', 'Buy Only High Liquidity Tokens 300-700 BNB', 'Custom Strategy']
+	const choices = ['Default', 'Buy All Tokens', 'Buy Only Low Liquidity Tokens 1-150 BNB', 'Buy Only Medium Liquidity Tokens 150-300 BNB', 'Buy Only High Liquidity Tokens 300-700 BNB', 'Custom Strategy']
 	const choices2 = ['COINMARKETCAP', 'COINGECKO'];
 	await input.select('Welcome, please choose a buying strategy', choices).then(async function (answers) {
 		if (answers == 'Buy All Tokens') {
-			buyAllTokensStrategy.investmentAmount = await input.text("Enter Investment Amount in BNB");
-			buyAllTokensStrategy.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
-			buyAllTokensStrategy.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
-			buyAllTokensStrategy.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
-			buyAllTokensStrategy.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
-			buyAllTokensStrategy.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
-			buyAllTokensStrategy.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
-			BUYALLTOKENS = true;
-			userStrategy = 'BA';
+			config.buyAllTokensStrategy.investmentAmount = await input.text("Enter Investment Amount in BNB");
+			config.buyAllTokensStrategy.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
+			config.buyAllTokensStrategy.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
+			config.buyAllTokensStrategy.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
+			config.buyAllTokensStrategy.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
+			config.buyAllTokensStrategy.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
+			config.buyAllTokensStrategy.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
+
+			config.userStrategy = 'BA';
 		}
 		if (answers == "Buy Only Low Liquidity Tokens 1-150 BNB") {
-			strategyLL.investmentAmount = await input.text("Enter Investment Amount in BNB");
-			strategyLL.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
-			strategyLL.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
-			strategyLL.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
-			strategyLL.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
-			strategyLL.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
-			strategyLL.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
-			strategyLL.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
-			strategyLL.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
-			strategyLL.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
+			config.strategyLL.investmentAmount = await input.text("Enter Investment Amount in BNB");
+			config.strategyLL.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
+			config.strategyLL.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
+			config.strategyLL.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
+			config.strategyLL.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
+			config.strategyLL.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
+			config.strategyLL.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
+			config.strategyLL.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
+			config.strategyLL.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
+			config.strategyLL.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
 			await input.select('Choose coinmarketcap or coingecko', choices2).then(async function (answers2) {
 				if (answers2 == "COINMARKETCAP") {
-					strategyLL.platform = "COINMARKETCAP";
+					config.strategyLL.platform = "COINMARKETCAP";
 				}
 				else {
-					strategyLL.platform = "COINGECKO";
+					config.strategyLL.platform = "COINGECKO";
 				}
 			});
-		
-			userStrategy = 'LL';
+
+			config.userStrategy = 'LL';
+			console.log(config.strategyLL);
 
 		}
 		if (answers == "Buy Only Medium Liquidity Tokens 150-300 BNB") {
-			strategyML.investmentAmount = await input.text("Enter Investment Amount in BNB");
-			strategyML.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
-			strategyML.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
-			strategyML.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
-			strategyML.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
-			strategyML.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
-			strategyML.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
-			strategyML.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
-			strategyML.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
-			strategyML.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
+			config.strategyML.investmentAmount = await input.text("Enter Investment Amount in BNB");
+			config.strategyML.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
+			config.strategyML.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
+			config.strategyML.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
+			config.strategyML.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
+			config.strategyML.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
+			config.strategyML.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
+			config.strategyML.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
+			config.strategyML.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
+			config.strategyML.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
 			await input.select('Choose coinmarketcap or coingecko', choices2).then(async function (answers2) {
 				if (answers2 == "COINMARKETCAP") {
-					strategyML.platform = "COINMARKETCAP";
+					config.strategyML.platform = "COINMARKETCAP";
 				}
 				else {
-					strategyML.platform = "COINGECKO";
+					config.strategyML.platform = "COINGECKO";
 				}
 			});
 
-			userStrategy = 'ML';
+			config.userStrategy = 'ML';
 
 		}
 		if (answers == "Buy Only High Liquidity Tokens 300-700 BNB") {
-			strategyHL.investmentAmount = await input.text("Enter Investment Amount in BNB");
-			strategyHL.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
-			strategyHL.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
-			strategyHL.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
-			strategyHL.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
-			strategyHL.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
-			strategyHL.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
-			strategyHL.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
-			strategyHL.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
-			strategyHL.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
+			config.strategyHL.investmentAmount = await input.text("Enter Investment Amount in BNB");
+			config.strategyHL.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
+			config.strategyHL.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
+			config.strategyHL.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
+			config.strategyHL.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
+			config.strategyHL.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
+			config.strategyHL.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
+			config.strategyHL.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
+			config.strategyHL.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
+			config.strategyHL.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
 			await input.select('Choose coinmarketcap or coingecko', choices2).then(async function (answers2) {
 				if (answers2 == "COINMARKETCAP") {
-					strategyHL.platform = "COINMARKETCAP";
+					config.strategyHL.platform = "COINMARKETCAP";
 				}
 				else {
-					strategyHL.platform = "COINGECKO";
+					config.strategyHL.platform = "COINGECKO";
 				}
 
 			});
-		
-			userStrategy = 'HL';
+
+			config.userStrategy = 'HL';
 		}
 		if (answers == "Custom Strategy") {
-			customStrategy.investmentAmount = await input.text("Enter Investment Amount in BNB");
-			customStrategy.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
-			customStrategy.minLiquidity = parseFloat(await input.text("Enter minimum liquidity"));
-			customStrategy.maxLiquidity = parseFloat(await input.text("Enter maximum liquidity"));
-			customStrategy.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
-			customStrategy.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
-			customStrategy.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
-			customStrategy.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
-			customStrategy.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
-			customStrategy.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
-			customStrategy.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
-			customStrategy.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
+			config.customStrategy.investmentAmount = await input.text("Enter Investment Amount in BNB");
+			config.customStrategy.gasPrice = ethers.utils.parseUnits(await input.text("Enter Gas Price"), 'gwei');
+			config.customStrategy.minLiquidity = parseFloat(await input.text("Enter minimum liquidity"));
+			config.customStrategy.maxLiquidity = parseFloat(await input.text("Enter maximum liquidity"));
+			config.customStrategy.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
+			config.customStrategy.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
+			config.customStrategy.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
+			config.customStrategy.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
+			config.customStrategy.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
+			config.customStrategy.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
+			config.customStrategy.percentOfTokensToSellProfit = parseFloat(await input.text("Enter percent of tokens to sell when profit reached"));
+			config.customStrategy.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
 			await input.select('Choose coinmarketcap or coingecko', choices2).then(async function (answers2) {
 				if (answers2 == "COINMARKETCAP") {
-					customStrategy.platform = "COINMARKETCAP";
+					config.customStrategy.platform = "COINMARKETCAP";
 				}
 				else {
-					customStrategy.platform = "COINGECKO";
+					config.customStrategy.platform = "COINGECKO";
 				}
 			});
-			userStrategy = 'Custom';
+			config.userStrategy = 'Custom';
 		}
 
 	});
-	let raw = await readFile('tokensBought.json'); 
-   	let tokensBought = JSON.parse(raw);
-    	dontBuyTheseTokens = tokensBought.tokens;
+	let raw = await readFile('tokensBought.json');
+	let tokensBought = JSON.parse(raw);
+	dontBuyTheseTokens = tokensBought.tokens;
 	client.addEventHandler(onNewMessage, new NewMessage({}));
 	console.log('\n', "Waiting for telegram notification to buy...");
-	
-})();
 
+})();
 async function readFile(path) {
-    return new Promise((resolve, reject) => {
-      fs.readFile(path, 'utf8', function (err, data) {
-        if (err) {
-          reject(err);
-        }
-        resolve(data);
-      });
-    });
-  }
+	return new Promise((resolve, reject) => {
+		fs.readFile(path, 'utf8', function (err, data) {
+			if (err) {
+				reject(err);
+			}
+			resolve(data);
+		});
+	});
+}
 /**
  * 
  * Check Strategies
@@ -470,57 +370,58 @@ async function readFile(path) {
  * */
 function didNotBuy(address) {
 	for (var j = 0; j < dontBuyTheseTokens.length; j++) {
-       		if (address == dontBuyTheseTokens[j].address) {
-            		return false;
-        	} 
-    	}
-    return true;
+		if (address == dontBuyTheseTokens[j].address) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	return true;
 }
 
 function isStrategy(liquidity, buyTax, sellTax, msg, address) {
-	if (userStrategy == 'BA') {
+	if (config.userStrategy == 'BA') {
 		if (msg.includes('BNB') && didNotBuy(address)) {
 			return true;
 		}
 
-	} else if (userStrategy == 'LL') {
-		if (liquidity <= strategyLL.maxLiquidity &&
-			liquidity >= strategyLL.minLiquidity &&
-			buyTax <= strategyLL.maxBuyTax &&
-			buyTax >= strategyLL.minBuyTax &&
-			sellTax <= strategyLL.maxSellTax &&
-			msg.includes("BNB") && msg.includes(strategyLL.platform) && didNotBuy(address)) {
+	} else if (config.userStrategy == 'LL') {
+		if (liquidity <= config.strategyLL.maxLiquidity &&
+			liquidity >= config.strategyLL.minLiquidity &&
+			buyTax <= config.strategyLL.maxBuyTax &&
+			buyTax >= config.strategyLL.minBuyTax &&
+			sellTax <= config.strategyLL.maxSellTax &&
+			msg.includes("BNB") && msg.includes(config.strategyLL.platform) && didNotBuy(address)) {
 			return true;
 		}
 
-	} else if (userStrategy == 'ML') {
-		if (liquidity <= strategyML.maxLiquidity &&
-			liquidity >= strategyML.minLiquidity &&
-			buyTax <= strategyML.maxBuyTax &&
-			buyTax >= strategyML.minBuyTax &&
-			sellTax <= strategyML.maxSellTax &&
-			msg.includes("BNB") && msg.includes(strategyML.platform) && didNotBuy(address)) {
+	} else if (config.userStrategy == 'ML') {
+		if (liquidity <= config.strategyML.maxLiquidity &&
+			liquidity >= config.strategyML.minLiquidity &&
+			buyTax <= config.strategyML.maxBuyTax &&
+			buyTax >= config.strategyML.minBuyTax &&
+			sellTax <= config.strategyML.maxSellTax &&
+			msg.includes("BNB") && msg.includes(config.strategyML.platform) && didNotBuy(address)) {
 			return true;
 		}
 
-	} else if (userStrategy == 'HL') {
-		if (liquidity <= strategyHL.maxLiquidity &&
-			liquidity >= strategyHL.minLiquidity &&
-			buyTax <= strategyHL.maxBuyTax &&
-			buyTax >= strategyHL.minBuyTax &&
-			sellTax <= strategyHL.maxSellTax && msg.includes("BNB") && msg.includes(strategyHL.platform) && didNotBuy(address)) {
+	} else if (config.userStrategy == 'HL') {
+		if (liquidity <= config.strategyHL.maxLiquidity &&
+			liquidity >= config.strategyHL.minLiquidity &&
+			buyTax <= config.strategyHL.maxBuyTax &&
+			buyTax >= config.strategyHL.minBuyTax &&
+			sellTax <= config.strategyHL.maxSellTax && msg.includes("BNB") && msg.includes(config.strategyHL.platform) && didNotBuy(address)) {
 			return true;
 		}
 
-	} else if (userStrategy == 'Custom') {
-		if (liquidity <= customStrategy.maxLiquidity &&
-			liquidity >= customStrategy.minLiquidity &&
-			buyTax <= customStrategy.maxBuyTax &&
-			buyTax >= customStrategy.minBuyTax &&
-			sellTax <= customStrategy.maxSellTax && msg.includes("BNB") && msg.includes(customStrategy.platform) && didNotBuy(address)) {
+	} else if (config.userStrategy == 'Custom') {
+		if (liquidity <= config.customStrategy.maxLiquidity &&
+			liquidity >= config.customStrategy.minLiquidity &&
+			buyTax <= config.customStrategy.maxBuyTax &&
+			buyTax >= config.customStrategy.minBuyTax &&
+			sellTax <= config.customStrategy.maxSellTax && msg.includes("BNB") && msg.includes(config.customStrategy.platform) && didNotBuy(address)) {
 			return true;
 		}
-
 	}
 	return false;
 }
@@ -576,15 +477,15 @@ async function onNewMessage(event) {
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
 				index: buyCount,
-				investmentAmount: strategyLL.investmentAmount,
-				profitPercent: strategyLL.profitPercent,
-				stopLossPercent: strategyLL.stopLossPercent,
-				gasPrice: strategyLL.gasPrice,
+				investmentAmount: config.strategyLL.investmentAmount,
+				profitPercent: config.strategyLL.profitPercent,
+				stopLossPercent: config.strategyLL.stopLossPercent,
+				gasPrice: config.strategyLL.gasPrice,
 				checkProfit: function () { checkForProfit(this); },
-				percentOfTokensToSellProfit: strategyLL.percentOfTokensToSellProfit,
-				percentOfTokensToSellLoss: strategyLL.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: strategyLL.trailingStopLossPercent,
-				trailingStopLossPercent: strategyLL.trailingStopLossPercent,
+				percentOfTokensToSellProfit: config.strategyLL.percentOfTokensToSellProfit,
+				percentOfTokensToSellLoss: config.strategyLL.percentOfTokensToSellLoss,
+				initialTrailingStopLossPercent: config.strategyLL.trailingStopLossPercent,
+				trailingStopLossPercent: config.strategyLL.trailingStopLossPercent,
 				stopLoss: 0,
 				intitialValue: 0
 			});
@@ -604,15 +505,15 @@ async function onNewMessage(event) {
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
 				index: buyCount,
-				investmentAmount: strategyML.investmentAmount,
-				profitPercent: strategyML.profitPercent,
-				stopLossPercent: strategyML.stopLossPercent,
-				gasPrice: strategyML.gasPrice,
+				investmentAmount: config.strategyML.investmentAmount,
+				profitPercent: config.strategyML.profitPercent,
+				stopLossPercent: config.strategyML.stopLossPercent,
+				gasPrice: config.strategyML.gasPrice,
 				checkProfit: function () { checkForProfit(this); },
-				percentOfTokensToSellProfit: strategyML.percentOfTokensToSellProfit,
-				percentOfTokensToSellLoss: strategyML.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: strategyML.trailingStopLossPercent,
-				trailingStopLossPercent: strategyML.trailingStopLossPercent,
+				percentOfTokensToSellProfit: config.strategyML.percentOfTokensToSellProfit,
+				percentOfTokensToSellLoss: config.strategyML.percentOfTokensToSellLoss,
+				initialTrailingStopLossPercent: config.strategyML.trailingStopLossPercent,
+				trailingStopLossPercent: config.strategyML.trailingStopLossPercent,
 				stopLoss: 0,
 				intitialValue: 0
 
@@ -633,15 +534,15 @@ async function onNewMessage(event) {
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
 				index: buyCount,
-				investmentAmount: strategyHL.investmentAmount,
-				profitPercent: strategyHL.profitPercent,
-				stopLossPercent: strategyHL.stopLossPercent,
-				gasPrice: strategyHL.gasPrice,
+				investmentAmount: config.strategyHL.investmentAmount,
+				profitPercent: config.strategyHL.profitPercent,
+				stopLossPercent: config.strategyHL.stopLossPercent,
+				gasPrice: config.strategyHL.gasPrice,
 				checkProfit: function () { checkForProfit(this); },
-				percentOfTokensToSellProfit: strategyHL.percentOfTokensToSellProfit,
-				percentOfTokensToSellLoss: strategyHL.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: strategyHL.trailingStopLossPercent,
-				trailingStopLossPercent: strategyHL.trailingStopLossPercent,
+				percentOfTokensToSellProfit: config.strategyHL.percentOfTokensToSellProfit,
+				percentOfTokensToSellLoss: config.strategyHL.percentOfTokensToSellLoss,
+				initialTrailingStopLossPercent: config.strategyHL.trailingStopLossPercent,
+				trailingStopLossPercent: config.strategyHL.trailingStopLossPercent,
 				stopLoss: 0,
 				intitialValue: 0
 			});
@@ -662,15 +563,15 @@ async function onNewMessage(event) {
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
 				index: buyCount,
-				investmentAmount: customStrategy.investmentAmount,
-				profitPercent: customStrategy.profitPercent,
-				stopLossPercent: customStrategy.stopLossPercent,
-				gasPrice: customStrategy.gasPrice,
+				investmentAmount: config.customStrategy.investmentAmount,
+				profitPercent: config.customStrategy.profitPercent,
+				stopLossPercent: config.customStrategy.stopLossPercent,
+				gasPrice: config.customStrategy.gasPrice,
 				checkProfit: function () { checkForProfit(this); },
-				percentOfTokensToSellProfit: customStrategy.percentOfTokensToSellProfit,
-				percentOfTokensToSellLoss: customStrategy.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: customStrategy.trailingStopLossPercent,
-				trailingStopLossPercent: customStrategy.trailingStopLossPercent,
+				percentOfTokensToSellProfit: config.customStrategy.percentOfTokensToSellProfit,
+				percentOfTokensToSellLoss: config.customStrategy.percentOfTokensToSellLoss,
+				initialTrailingStopLossPercent: config.customStrategy.trailingStopLossPercent,
+				trailingStopLossPercent: config.customStrategy.trailingStopLossPercent,
 				stopLoss: 0,
 				intitialValue: 0
 			});
@@ -690,15 +591,15 @@ async function onNewMessage(event) {
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
 				index: buyCount,
-				investmentAmount: buyAllTokensStrategy.investmentAmount,
-				profitPercent: buyAllTokensStrategy.profitPercent,
-				stopLossPercent: buyAllTokensStrategy.stopLossPercent,
-				gasPrice: buyAllTokensStrategy.gasPrice,
+				investmentAmount: config.buyAllTokensStrategy.investmentAmount,
+				profitPercent: config.buyAllTokensStrategy.profitPercent,
+				stopLossPercent: config.buyAllTokensStrategy.stopLossPercent,
+				gasPrice: config.buyAllTokensStrategy.gasPrice,
 				checkProfit: function () { checkForProfit(this); },
-				percentOfTokensToSellProfit: buyAllTokensStrategy.percentOfTokensToSellProfit,
-				percentOfTokensToSellLoss: buyAllTokensStrategy.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: buyAllTokensStrategy.trailingStopLossPercent,
-				trailingStopLossPercent: buyAllTokensStrategy.trailingStopLossPercent,
+				percentOfTokensToSellProfit: config.buyAllTokensStrategy.percentOfTokensToSellProfit,
+				percentOfTokensToSellLoss: config.buyAllTokensStrategy.percentOfTokensToSellLoss,
+				initialTrailingStopLossPercent: config.buyAllTokensStrategy.trailingStopLossPercent,
+				trailingStopLossPercent: config.buyAllTokensStrategy.trailingStopLossPercent,
 				stopLoss: 0,
 				intitialValue: 0
 			});

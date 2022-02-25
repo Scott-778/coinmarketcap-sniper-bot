@@ -16,7 +16,7 @@ const ethers = require('ethers');
  * 
  * **/
 module.exports.channel = 'CGCMC';   // CGCMC or CFA 
-module.exports.numberOfTokensToBuy = 1; // number of different tokens you want to buy
+module.exports.numberOfTokensToBuy = 10; // number of different tokens you want to buy
 
 module.exports.autoSell = true;  // If you want to auto sell or not 
 

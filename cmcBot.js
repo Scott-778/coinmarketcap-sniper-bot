@@ -217,7 +217,7 @@ async function sell(tokenObj, isProfit) {
 
 /**
  * 
- * Configure Strategies User Input
+ * Don't Change code below change settings in config.js
  * 
  * */
 (async () => {
@@ -267,7 +267,6 @@ async function sell(tokenObj, isProfit) {
 				}
 			});
 			config.userStrategy = 'LL';
-			console.log(config.strategyLL);
 		}
 		if (answers == "Buy Only Medium Liquidity Tokens 150-300 BNB") {
 			config.strategyML.investmentAmount = await input.text("Enter Investment Amount in BNB");

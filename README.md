@@ -35,11 +35,14 @@ node cmcBot.js
 
 When bot is running it it will ask for your telephone number to log in to Telegram enter your telephone number with country code ex 15555555555 then press enter. Then telegram will send you a code to log in enter that number and press enter. If you have two step verification on the bot will ask for your two step password. Then pick your buying strategy default, low liquidity, medium liquidity, high liquidity or create a custom strategy. Then leave the bot running and when you recieve a notification from this channel https://t.me/joinchat/b17jE6EbQX5kNWY8 the bot will buy that token.
 
+## Channels
+#### Choose a channel to get buy signals from. Be sure to join the channel on telegram with the account that you logged in with.
+#### CoinGecko & CoinmarketCap Listing Alerts Premium https://t.me/CMC_CG_listing_alerts
+#### Coinmarketcap Fastest Alerts https://t.me/CMC_fastest_alerts
+
 ## Strategies
 #### Default: 
 This option is if you don't want to enter all your settings everytime you run the bot. Enter your settings in the config.js file and bot will use those settings.
-
-
 #### Low liquidity strategy: 
 This strategy buys all low liquid tokens 1-150 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko. High risk. You don't need to change the config.js file for this option.
 #### Medium liquidity strategy:

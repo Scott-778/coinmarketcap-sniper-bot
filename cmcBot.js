@@ -15,9 +15,6 @@ const open = require('open');
 require('dotenv').config();
 const fs = require('fs');
 const config = require('./config');
-
-/*-----------Default Settings-----------*/
-
 const addresses = {
 	WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 	pancakeRouter: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
@@ -46,7 +43,6 @@ let tokenAbi = [
 	'function buyTokens(address tokenAddress, address to) payable',
 	'function decimals() external view returns (uint8)'
 ];
-
 let token = [];
 var sellCount = 0;
 var buyCount = 0;
@@ -270,10 +266,8 @@ async function sell(tokenObj, isProfit) {
 					config.strategyLL.platform = "COINGECKO";
 				}
 			});
-
 			config.userStrategy = 'LL';
 			console.log(config.strategyLL);
-
 		}
 		if (answers == "Buy Only Medium Liquidity Tokens 150-300 BNB") {
 			config.strategyML.investmentAmount = await input.text("Enter Investment Amount in BNB");
@@ -294,9 +288,7 @@ async function sell(tokenObj, isProfit) {
 					config.strategyML.platform = "COINGECKO";
 				}
 			});
-
 			config.userStrategy = 'ML';
-
 		}
 		if (answers == "Buy Only High Liquidity Tokens 300-700 BNB") {
 			config.strategyHL.investmentAmount = await input.text("Enter Investment Amount in BNB");
@@ -316,9 +308,7 @@ async function sell(tokenObj, isProfit) {
 				else {
 					config.strategyHL.platform = "COINGECKO";
 				}
-
 			});
-
 			config.userStrategy = 'HL';
 		}
 		if (answers == "Custom Strategy") {
@@ -344,15 +334,14 @@ async function sell(tokenObj, isProfit) {
 			});
 			config.userStrategy = 'Custom';
 		}
-
 	});
 	let raw = await readFile('tokensBought.json');
 	let tokensBought = JSON.parse(raw);
 	dontBuyTheseTokens = tokensBought.tokens;
 	client.addEventHandler(onNewMessage, new NewMessage({}));
 	console.log('\n', "Waiting for telegram notification to buy...");
-
 })();
+
 async function readFile(path) {
 	return new Promise((resolve, reject) => {
 		fs.readFile(path, 'utf8', function (err, data) {
@@ -384,7 +373,6 @@ function isStrategy(liquidity, buyTax, sellTax, msg, address) {
 		if (msg.includes('BNB') && didNotBuy(address)) {
 			return true;
 		}
-
 	} else if (config.userStrategy == 'LL') {
 		if (liquidity <= config.strategyLL.maxLiquidity &&
 			liquidity >= config.strategyLL.minLiquidity &&
@@ -394,7 +382,6 @@ function isStrategy(liquidity, buyTax, sellTax, msg, address) {
 			msg.includes("BNB") && msg.includes(config.strategyLL.platform) && didNotBuy(address)) {
 			return true;
 		}
-
 	} else if (config.userStrategy == 'ML') {
 		if (liquidity <= config.strategyML.maxLiquidity &&
 			liquidity >= config.strategyML.minLiquidity &&
@@ -404,7 +391,6 @@ function isStrategy(liquidity, buyTax, sellTax, msg, address) {
 			msg.includes("BNB") && msg.includes(config.strategyML.platform) && didNotBuy(address)) {
 			return true;
 		}
-
 	} else if (config.userStrategy == 'HL') {
 		if (liquidity <= config.strategyHL.maxLiquidity &&
 			liquidity >= config.strategyHL.minLiquidity &&
@@ -413,7 +399,6 @@ function isStrategy(liquidity, buyTax, sellTax, msg, address) {
 			sellTax <= config.strategyHL.maxSellTax && msg.includes("BNB") && msg.includes(config.strategyHL.platform) && didNotBuy(address)) {
 			return true;
 		}
-
 	} else if (config.userStrategy == 'Custom') {
 		if (liquidity <= config.customStrategy.maxLiquidity &&
 			liquidity >= config.customStrategy.minLiquidity &&

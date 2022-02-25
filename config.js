@@ -4,7 +4,7 @@ const ethers = require('ethers');
 ** Strategy Configuration file
 **/
 
-module.exports.numberOfTokensToBuy = 1; // number of tokens you want to buy
+module.exports.numberOfTokensToBuy = 1; // number of different tokens you want to buy
 
 module.exports.autoSell = true;  // If you want to auto sell or not 
 
@@ -16,7 +16,8 @@ module.exports.userStrategy = 'BA'; // BA, LL, ML, HL or Custom.  // Choose your
 
 
 /* Strategy for buying all tokens (BA) */
-module.exports.buyAllTokensStrategy = {
+module.exports.buyAllTokensStrategy = 
+{
 
     investmentAmount: '0.1', // Amount to invest per token in BNB
     gasPrice: ethers.utils.parseUnits('6', 'gwei'),
@@ -82,7 +83,8 @@ module.exports.strategyHL =
 }
 
 /* Custom Strategy  (Custom) */
-module.exports.customStrategy = {
+module.exports.customStrategy =
+{
     investmentAmount: '0.3', 	// Investment amount per token
     maxBuyTax: 11,            	// max buy tax
     minBuyTax: 0,			// min buy tax

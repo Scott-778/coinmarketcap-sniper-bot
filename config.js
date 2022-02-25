@@ -4,6 +4,18 @@ const ethers = require('ethers');
 ** Strategy Configuration file
 **/
 
+/**
+ * Choose your channel to buy from
+ * You have to join these channels on your telegram app
+ * 
+ * GCCMC = CoinGecko & CoinmarketCap Listing Alerts Premium https://t.me/CMC_CG_listing_alerts
+ * 
+ * CFA = Coinmarketcap Fastest Alerts https://t.me/CMC_fastest_alerts
+ * 
+ *
+ * 
+ * **/
+module.exports.channel = 'CGCMC';   // CGCMC or CFA 
 module.exports.numberOfTokensToBuy = 1; // number of different tokens you want to buy
 
 module.exports.autoSell = true;  // If you want to auto sell or not 

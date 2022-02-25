@@ -36,16 +36,18 @@ node cmcBot.js
 When bot is running it it will ask for your telephone number to log in to Telegram enter your telephone number with country code ex 15555555555 then press enter. Then telegram will send you a code to log in enter that number and press enter. If you have two step verification on the bot will ask for your two step password. Then pick your buying strategy default, low liquidity, medium liquidity, high liquidity or create a custom strategy. Then leave the bot running and when you recieve a notification from this channel https://t.me/joinchat/b17jE6EbQX5kNWY8 the bot will buy that token.
 
 ## Strategies
-#### Default strategy: 
-This strategy buys all CoinmarketCap token and CoinGecko tokens no tax limit and no liquidity limit. High risk.
+#### Default: 
+This option is if you don't want to enter all your settings everytime you run the bot. Enter your settings in the config.js file and bot will use those settings.
+
+
 #### Low liquidity strategy: 
-This strategy buys all low liquid tokens 1-150 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko. High risk.
+This strategy buys all low liquid tokens 1-150 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko. High risk. You don't need to change the config.js file for this option.
 #### Medium liquidity strategy:
-This strategy buys all medium liquid tokens 150-300 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko. Medium risk.
+This strategy buys all medium liquid tokens 150-300 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko. Medium risk. You don't need to change the config.js file for this option.
 #### High liquidity strategy:
-This strategy buys all high liquid tokens 300-700 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko.
+This strategy buys all high liquid tokens 300-700 BNB. You can choose your buy and sell tax limits. Choose either CoinMarketCap or CoinGecko. You don't need to change the config.js file for this option.
 #### Custom strategy:
-This strategy buys any token within your own custom settings. You can set you own liquidity and tax limits.Choose either CoinMarketCap or CoinGecko. Low risk.
+This strategy buys any token within your own custom settings. You can set you own liquidity and tax limits.Choose either CoinMarketCap or CoinGecko. Low risk. You don't need to change the config.js file for this option.
 
 ## Screenshots
 ![ghss3](https://user-images.githubusercontent.com/91510798/154159554-cd6a2d3a-c0ca-4710-9c10-b0fe388467a1.png)

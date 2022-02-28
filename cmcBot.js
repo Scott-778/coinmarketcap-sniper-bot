@@ -279,8 +279,6 @@ function didNotBuy(address) {
 	for (var j = 0; j < dontBuyTheseTokens.length; j++) {
 		if (address == dontBuyTheseTokens[j].address) {
 			return false;
-		} else {
-			return true;
 		}
 	}
 	return true;

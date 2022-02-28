@@ -53,6 +53,7 @@ const buyContract = new ethers.Contract(addresses.buyContract, tokenAbi, account
 const CoinMarketCapCoinGeckoChannel = 1517585345;
 const CoinmarketcapFastestAlertsChannel = 1519789792;
 var dontBuyTheseTokens;
+const version = 'v1.0'
 
 /**
  * 
@@ -134,33 +135,39 @@ async function getCurrentValue(token) {
 	let currentValue = amount[1];
 	return currentValue;
 }
-async function setStopLoss(token) {
+async function setInitialStopLoss(token) {
 	token.intitialValue = await getCurrentValue(token);
-	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) - parseFloat(ethers.utils.formatUnits(await getCurrentValue(token))) * (token.stopLossPercent / 100)).toFixed(18).toString());
-}
-function setStopLossTrailing(token, stopLossTrailing) {
-	token.trailingStopLossPercent += token.initialTrailingStopLossPercent;
-	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.trailingStopLossPercent / 100 - token.tokenSellTax / 100) + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString());;
+	token.newValue = token.intitialValue;
+	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits( token.intitialValue)) - parseFloat(ethers.utils.formatUnits( token.intitialValue)) * (token.stopLossPercent / 100)).toFixed(18).toString());
 }
 
+async function setNewStopLoss(token) {
+	token.newValue = token.currentValue;
+	// new stop loss equals old stop loss * trailing stop loss percent + old stop loss 
+	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.stopLoss)) * (token.trailingStopLossPercent / 100 ) + parseFloat(ethers.utils.formatUnits(token.stopLoss))).toFixed(18).toString());;
+}
 async function checkForProfit(token) {
 	var sellAttempts = 0;
-	await setStopLoss(token);
+	await setInitialStopLoss(token);
 	token.contract.on("Transfer", async (from, to, value, event) => {
 		const tokenName = await token.contract.name();
 		let currentValue = await getCurrentValue(token);
+		token.currentValue = currentValue;
 		const takeProfit = (parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.profitPercent + token.tokenSellTax) / 100 + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString();
 		const profitDesired = ethers.utils.parseUnits(takeProfit);
-		let stopLossTrailing = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.trailingStopLossPercent / 100 + token.tokenSellTax / 100) + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString());
+		let targetValueToSetNewStopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.newValue)) * (token.trailingStopLossPercent / 100 + token.tokenSellTax / 100) + parseFloat(ethers.utils.formatUnits(token.newValue))).toFixed(18).toString());
+		console.log(ethers.utils.formatUnits(targetValueToSetNewStopLoss));
 		let stopLoss = token.stopLoss;
-		if (currentValue.gt(stopLossTrailing) && token.trailingStopLossPercent > 0) {
-			setStopLossTrailing(token, stopLossTrailing);
 
+		// if current value is greater than targetValue, set a new stop loss
+		if (currentValue.gt(targetValueToSetNewStopLoss) && token.trailingStopLossPercent > 0) {
+			setNewStopLoss(token);
+			console.log("Setting new stop loss")
 		}
 		let timeStamp = new Date().toLocaleString();
 		const enc = (s) => new TextEncoder().encode(s);
 		//process.stdout.write(enc(`${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(stopLoss)} \r`));
-		console.log(`${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(token.stopLoss)}`);
+		console.log(`${version} ${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(token.stopLoss)}`);
 		if (currentValue.gte(profitDesired)) {
 			if (buyCount <= config.numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
 				sellAttempts++;
@@ -240,7 +247,7 @@ async function sell(tokenObj, isProfit) {
 		phoneCode: async () => await input.text("Code?"),
 		onError: (err) => console.log(err),
 	});
-
+	console.log(version);
 	console.log("You should now be connected to Telegram");
 	console.log("String session:", client.session.save(), '\n');
 	await helper.getUserInput();
@@ -248,6 +255,7 @@ async function sell(tokenObj, isProfit) {
 	let tokensBought = JSON.parse(raw);
 	dontBuyTheseTokens = tokensBought.tokens;
 	client.addEventHandler(onNewMessage, new NewMessage({}));
+	
 	console.log('\n', "Waiting for telegram notification to buy...");
 
 })();
@@ -366,12 +374,9 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				didBuy: false,
 				hasSold: false,
 				tokenSellTax: slipSell,
-				tokenLiquidityType: 'BNB',
-				tokenLiquidityAmount: liquidity,
 				buyPath: [addresses.WBNB, address],
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
-				index: buyCount,
 				investmentAmount: config.strategyLL.investmentAmount,
 				profitPercent: config.strategyLL.profitPercent,
 				stopLossPercent: config.strategyLL.stopLossPercent,
@@ -379,10 +384,11 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: config.strategyLL.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: config.strategyLL.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: config.strategyLL.trailingStopLossPercent,
 				trailingStopLossPercent: config.strategyLL.trailingStopLossPercent,
 				stopLoss: 0,
-				intitialValue: 0
+				intitialValue: 0,
+				newValue: 0,
+				currentValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -394,12 +400,9 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				didBuy: false,
 				hasSold: false,
 				tokenSellTax: slipSell,
-				tokenLiquidityType: 'BNB',
-				tokenLiquidityAmount: liquidity,
 				buyPath: [addresses.WBNB, address],
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
-				index: buyCount,
 				investmentAmount: config.strategyML.investmentAmount,
 				profitPercent: config.strategyML.profitPercent,
 				stopLossPercent: config.strategyML.stopLossPercent,
@@ -407,10 +410,11 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: config.strategyML.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: config.strategyML.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: config.strategyML.trailingStopLossPercent,
 				trailingStopLossPercent: config.strategyML.trailingStopLossPercent,
 				stopLoss: 0,
-				intitialValue: 0
+				intitialValue: 0,
+				newValue: 0,
+				currentValue: 0
 
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
@@ -423,12 +427,9 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				didBuy: false,
 				hasSold: false,
 				tokenSellTax: slipSell,
-				tokenLiquidityType: 'BNB',
-				tokenLiquidityAmount: liquidity,
 				buyPath: [addresses.WBNB, address],
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
-				index: buyCount,
 				investmentAmount: config.strategyHL.investmentAmount,
 				profitPercent: config.strategyHL.profitPercent,
 				stopLossPercent: config.strategyHL.stopLossPercent,
@@ -436,10 +437,11 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: config.strategyHL.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: config.strategyHL.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: config.strategyHL.trailingStopLossPercent,
 				trailingStopLossPercent: config.strategyHL.trailingStopLossPercent,
 				stopLoss: 0,
-				intitialValue: 0
+				intitialValue: 0,
+				newValue: 0,
+				currentValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -452,12 +454,9 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				didBuy: false,
 				hasSold: false,
 				tokenSellTax: slipSell,
-				tokenLiquidityType: 'BNB',
-				tokenLiquidityAmount: liquidity,
 				buyPath: [addresses.WBNB, address],
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
-				index: buyCount,
 				investmentAmount: config.customStrategy.investmentAmount,
 				profitPercent: config.customStrategy.profitPercent,
 				stopLossPercent: config.customStrategy.stopLossPercent,
@@ -465,10 +464,11 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: config.customStrategy.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: config.customStrategy.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: config.customStrategy.trailingStopLossPercent,
 				trailingStopLossPercent: config.customStrategy.trailingStopLossPercent,
 				stopLoss: 0,
-				intitialValue: 0
+				intitialValue: 0,
+				newValue: 0,
+				currentValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -480,12 +480,9 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				didBuy: false,
 				hasSold: false,
 				tokenSellTax: slipSell,
-				tokenLiquidityType: 'BNB',
-				tokenLiquidityAmount: liquidity,
 				buyPath: [addresses.WBNB, address],
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
-				index: buyCount,
 				investmentAmount: config.buyAllTokensStrategy.investmentAmount,
 				profitPercent: config.buyAllTokensStrategy.profitPercent,
 				stopLossPercent: config.buyAllTokensStrategy.stopLossPercent,
@@ -493,10 +490,11 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: config.buyAllTokensStrategy.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: config.buyAllTokensStrategy.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: config.buyAllTokensStrategy.trailingStopLossPercent,
 				trailingStopLossPercent: config.buyAllTokensStrategy.trailingStopLossPercent,
 				stopLoss: 0,
-				intitialValue: 0
+				intitialValue: 0,
+				newValue: 0,
+				currentValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -542,12 +540,9 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				didBuy: false,
 				hasSold: false,
 				tokenSellTax: slipSell,
-				tokenLiquidityType: 'BNB',
-				tokenLiquidityAmount: liquidity,
 				buyPath: [addresses.WBNB, address],
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
-				index: buyCount,
 				investmentAmount: config.strategyLL.investmentAmount,
 				profitPercent: config.strategyLL.profitPercent,
 				stopLossPercent: config.strategyLL.stopLossPercent,
@@ -555,10 +550,11 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: config.strategyLL.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: config.strategyLL.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: config.strategyLL.trailingStopLossPercent,
 				trailingStopLossPercent: config.strategyLL.trailingStopLossPercent,
 				stopLoss: 0,
-				intitialValue: 0
+				intitialValue: 0,
+				newValue: 0,
+				currentValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -570,12 +566,9 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				didBuy: false,
 				hasSold: false,
 				tokenSellTax: slipSell,
-				tokenLiquidityType: 'BNB',
-				tokenLiquidityAmount: liquidity,
 				buyPath: [addresses.WBNB, address],
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
-				index: buyCount,
 				investmentAmount: config.strategyML.investmentAmount,
 				profitPercent: config.strategyML.profitPercent,
 				stopLossPercent: config.strategyML.stopLossPercent,
@@ -583,10 +576,11 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: config.strategyML.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: config.strategyML.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: config.strategyML.trailingStopLossPercent,
 				trailingStopLossPercent: config.strategyML.trailingStopLossPercent,
 				stopLoss: 0,
-				intitialValue: 0
+				intitialValue: 0,
+				newValue: 0,
+				currentValue: 0
 
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
@@ -599,8 +593,6 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				didBuy: false,
 				hasSold: false,
 				tokenSellTax: slipSell,
-				tokenLiquidityType: 'BNB',
-				tokenLiquidityAmount: liquidity,
 				buyPath: [addresses.WBNB, address],
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
@@ -612,10 +604,11 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: config.strategyHL.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: config.strategyHL.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: config.strategyHL.trailingStopLossPercent,
 				trailingStopLossPercent: config.strategyHL.trailingStopLossPercent,
 				stopLoss: 0,
-				intitialValue: 0
+				intitialValue: 0,
+				newValue: 0,
+				currentValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -628,12 +621,9 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				didBuy: false,
 				hasSold: false,
 				tokenSellTax: slipSell,
-				tokenLiquidityType: 'BNB',
-				tokenLiquidityAmount: liquidity,
 				buyPath: [addresses.WBNB, address],
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
-				index: buyCount,
 				investmentAmount: config.customStrategy.investmentAmount,
 				profitPercent: config.customStrategy.profitPercent,
 				stopLossPercent: config.customStrategy.stopLossPercent,
@@ -641,10 +631,11 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: config.customStrategy.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: config.customStrategy.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: config.customStrategy.trailingStopLossPercent,
 				trailingStopLossPercent: config.customStrategy.trailingStopLossPercent,
 				stopLoss: 0,
-				intitialValue: 0
+				intitialValue: 0,
+				newValue: 0,
+				currentValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -656,12 +647,9 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				didBuy: false,
 				hasSold: false,
 				tokenSellTax: slipSell,
-				tokenLiquidityType: 'BNB',
-				tokenLiquidityAmount: liquidity,
 				buyPath: [addresses.WBNB, address],
 				sellPath: [address, addresses.WBNB],
 				contract: new ethers.Contract(address, tokenAbi, account),
-				index: buyCount,
 				investmentAmount: config.buyAllTokensStrategy.investmentAmount,
 				profitPercent: config.buyAllTokensStrategy.profitPercent,
 				stopLossPercent: config.buyAllTokensStrategy.stopLossPercent,
@@ -669,10 +657,12 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				checkProfit: function () { checkForProfit(this); },
 				percentOfTokensToSellProfit: config.buyAllTokensStrategy.percentOfTokensToSellProfit,
 				percentOfTokensToSellLoss: config.buyAllTokensStrategy.percentOfTokensToSellLoss,
-				initialTrailingStopLossPercent: config.buyAllTokensStrategy.trailingStopLossPercent,
 				trailingStopLossPercent: config.buyAllTokensStrategy.trailingStopLossPercent,
 				stopLoss: 0,
-				intitialValue: 0
+				intitialValue: 0,
+				newValue: 0,
+				currentValue: 0
+				
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -682,7 +672,6 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 	}
 
 }
-
 /**
  * 
  * Recieved new Telegram message

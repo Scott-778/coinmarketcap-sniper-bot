@@ -247,9 +247,9 @@ async function sell(tokenObj, isProfit) {
 		phoneCode: async () => await input.text("Code?"),
 		onError: (err) => console.log(err),
 	});
-	console.log(version);
-	console.log("You should now be connected to Telegram");
-	console.log("String session:", client.session.save(), '\n');
+	console.log(`\nCurrent Version is ${version}\n`);
+	console.log("Your string session is:", client.session.save(), '\n');
+	console.log(`Connected to wallet: ${wallet.address} \n`);
 	await helper.getUserInput();
 	let raw = await readFile('tokensBought.json');
 	let tokensBought = JSON.parse(raw);

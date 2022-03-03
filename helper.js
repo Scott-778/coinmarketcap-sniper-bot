@@ -22,7 +22,7 @@ async function getUserInput() {
             config.buyAllTokensStrategy.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
             await input.select('Choose a channel to buy from', channelChoices).then(async function (channelAnswer) {
                 if (channelAnswer == "CoinGecko & CoinMarketCap Listing Alerts") {
-                    config.channel = 'GCCMC'
+                    config.channel = 'CGCMC'
                 }
                 else {
                     config.channel = 'CFA'
@@ -44,7 +44,7 @@ async function getUserInput() {
             config.strategyLL.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
             await input.select('Choose a channel to buy from', channelChoices).then(async function (channelAnswer) {
                 if (channelAnswer == "CoinGecko & CoinMarketCap Listing Alerts") {
-                    config.channel = 'GCCMC'
+                    config.channel = 'CGCMC'
                     await input.select('Choose coinmarketcap or coingecko', choices2).then(async function (answers2) {
                         if (answers2 == "COINMARKETCAP") {
                             config.strategyLL.platform = "COINMARKETCAP";
@@ -74,7 +74,7 @@ async function getUserInput() {
             config.strategyML.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
             await input.select('Choose a channel to buy from', channelChoices).then(async function (channelAnswer) {
                 if (channelAnswer == "CoinGecko & CoinMarketCap Listing Alerts") {
-                    config.channel = 'GCCMC'
+                    config.channel = 'CGCMC'
                     await input.select('Choose coinmarketcap or coingecko', choices2).then(async function (answers2) {
                         if (answers2 == "COINMARKETCAP") {
                             config.strategyML.platform = "COINMARKETCAP";
@@ -106,7 +106,7 @@ async function getUserInput() {
             config.strategyHL.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
             await input.select('Choose a channel to buy from', channelChoices).then(async function (channelAnswer) {
                 if (channelAnswer == "CoinGecko & CoinMarketCap Listing Alerts") {
-                    config.channel = 'GCCMC'
+                    config.channel = 'CGCMC'
                     await input.select('Choose coinmarketcap or coingecko', choices2).then(async function (answers2) {
                         if (answers2 == "COINMARKETCAP") {
                             config.strategyHL.platform = "COINMARKETCAP";
@@ -139,7 +139,7 @@ async function getUserInput() {
             config.customStrategy.percentOfTokensToSellLoss = parseFloat(await input.text("Enter percent of tokens to sell when stop loss reached"));
             await input.select('Choose a channel to buy from', channelChoices).then(async function (channelAnswer) {
                 if (channelAnswer == "CoinGecko & CoinMarketCap Listing Alerts") {
-                    config.channel = 'GCCMC'
+                    config.channel = 'CGCMC'
                     await input.select('Choose coinmarketcap or coingecko', choices2).then(async function (answers2) {
                         if (answers2 == "COINMARKETCAP") {
                             config.customStrategy.platform = "COINMARKETCAP";

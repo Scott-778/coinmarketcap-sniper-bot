@@ -472,7 +472,7 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 			buy();
 		}
 		// Buy all tokens no strategy
-		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address)) {
+		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && config.userStrategy == 'BA') {
 			token.push({
 				tokenAddress: address,
 				didBuy: false,

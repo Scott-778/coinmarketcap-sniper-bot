@@ -15,10 +15,10 @@ This bot uses Smart Chain BNB to buy tokens not WBNB.
 
 Then Use the following commands either in VScode terminal or command prompt 
 ```
-git clone https://github.com/Scott-778/coinmarketcap-sniperbot.git
+git clone https://github.com/Scott-778/coinmarketcap-sniper-bot.git
 ```
 ```
-cd coinmarketcap-sniperbot
+cd coinmarketcap-sniper-bot
 ```
 ```
 npm install

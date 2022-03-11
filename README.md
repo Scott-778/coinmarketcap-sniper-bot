@@ -65,5 +65,5 @@ Use at your own risk. Investing in cryptocurrency is risky. This is not financia
 There is a small 0.7% buying fee per buy. This is to help me buy a cup of coffee and support for this project. 
 If you have an issue please don't post screenshots with personal information like seed phrase, telephone number, Telegram code, Telegram two factor password, or Telegram string session. Please keep that information private!
 ## Supporters
-[![Stargazers repo roster for @Scott-778/coinmarketcap-sniperbot](https://reporoster.com/stars/Scott-778/coinmarketcap-sniperbot)](https://github.com/Scott-778/coinmarketcap-sniperbot/stargazers)
+[![Stargazers repo roster for @Scott-778/coinmarketcap-sniper-bot](https://reporoster.com/stars/Scott-778/coinmarketcap-sniper-bot)](https://github.com/Scott-778/coinmarketcap-sniper-bot/stargazers)
 

@@ -34,7 +34,8 @@ const provider = new ethers.providers.JsonRpcProvider(node);
 const account = wallet.connect(provider);
 const pancakeAbi = [
 	'function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts)',
-	'function swapExactTokensForETHSupportingFeeOnTransferTokens(uint256 amountIn, uint256 amountOutMin, address[] path, address to, uint256 deadline)'
+	'function swapExactTokensForETHSupportingFeeOnTransferTokens(uint256 amountIn, uint256 amountOutMin, address[] path, address to, uint256 deadline)',
+	'function swapExactTokensForETH(uint256 amountIn, uint256 amountOutMin, address[] path, address to, uint256 deadline)'
 ];
 const pancakeRouter = new ethers.Contract(addresses.pancakeRouter, pancakeAbi, account);
 let tokenAbi = [
@@ -235,13 +236,49 @@ async function sell(tokenObj, isProfit) {
 		sellCount++;
 		token[tokenObj.index].didSell = true;
 
-		if (sellCount == config.numberOfTokensToBuy) {
+		if (buyCount == config.numberOfTokensToBuy) {
 			console.log("All tokens sold");
 			process.exit();
 		}
 
 	} catch (e) {
-		console.log("\u001b[1;31m"+"❌ Receipt error: transaction failed! Check on BscScan.com"+"\u001b[0m", "\n");
+		try{
+		const bal = await tokenObj.contract.balanceOf(addresses.recipient);
+		const decimals = await tokenObj.contract.decimals();
+		var balanceString;
+		if (isProfit) {
+			balanceString = (parseFloat(ethers.utils.formatUnits(bal.toString(), decimals)) * (tokenObj.percentOfTokensToSellProfit / 100)).toFixed(decimals).toString();
+		} else {
+			balanceString = (parseFloat(ethers.utils.formatUnits(bal.toString(), decimals)) * (tokenObj.percentOfTokensToSellLoss / 100)).toFixed(decimals).toString();
+		}
+		const balanceToSell = ethers.utils.parseUnits(balanceString, decimals);
+		const sellAmount = await pancakeRouter.getAmountsOut(balanceToSell, tokenObj.sellPath);
+		const sellAmountsOutMin = sellAmount[1].sub(sellAmount[1].div(2));
+
+		const tx = await pancakeRouter.swapExactTokensForETH(
+			sellAmount[0].toString(),
+			0,
+			tokenObj.sellPath,
+			addresses.recipient,
+			Math.floor(Date.now() / 1000) + 60 * 3, {
+			gasPrice: config.myGasPriceForApproval,
+			gasLimit: config.myGasLimit,
+
+		}
+		);
+		const receipt = await tx.wait();
+		console.log("Sell transaction hash: ", receipt.transactionHash);
+		sellCount++;
+		token[tokenObj.index].didSell = true;
+
+		if (buyCount == config.numberOfTokensToBuy) {
+			console.log("All tokens sold");
+			process.exit();
+		}
+		}catch(e){
+			console.log("\u001b[1;31m"+"❌ Receipt error: transaction failed! Check on BscScan.com"+"\u001b[0m", "\n");
+		}
+		
 	}
 }
 

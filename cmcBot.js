@@ -53,7 +53,7 @@ const buyContract = new ethers.Contract(addresses.buyContract, tokenAbi, account
 const CoinMarketCapCoinGeckoChannel = 1517585345;
 const CoinmarketcapFastestAlertsChannel = 1519789792;
 var dontBuyTheseTokens;
-const version = 'v1.01';
+const version = 'v1.02';
 
 /**
  * 

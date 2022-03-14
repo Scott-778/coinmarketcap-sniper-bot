@@ -61,6 +61,7 @@ const version = 'v1.01';
  * 
  * */
 async function buy() {
+	try {
 	if (buyCount < config.numberOfTokensToBuy) {
 		const value = ethers.utils.parseUnits(token[buyCount].investmentAmount, 'ether').toString();
 		const tx = await buyContract.buyTokens(token[buyCount].tokenAddress, addresses.recipient,
@@ -71,7 +72,7 @@ async function buy() {
 
 			});
 		const receipt = await tx.wait();
-		console.log("Buy transaction hash: ", receipt.transactionHash);
+		console.log("\u001b[1;32m"+"✔ Buy transaction hash: ", receipt.transactionHash, "\u001b[0m");
 		token[buyCount].didBuy = true;
 		const poocoinURL = new URL(token[buyCount].tokenAddress, 'https://poocoin.app/tokens/');
 		open(poocoinURL.href);
@@ -94,6 +95,10 @@ async function buy() {
 		});
 
 		approve();
+		}
+	} catch (e) {
+	console.log("\u001b[1;31m"+"❌ Buy transaction error, check on BscScan.com"+"\u001b[0m");
+	console.log("\u001b[1;31m"+"Attention! Make sure that all active transactions and trading sessions are completed and restart the bot."+"\u001b[0m", "\n");
 	}
 
 }
@@ -103,6 +108,7 @@ async function buy() {
  * 
  * */
 async function approve() {
+	try {
 	let contract = token[buyCount - 1].contract;
 	const valueToApprove = ethers.constants.MaxUint256;
 	const tx = await contract.approve(
@@ -113,13 +119,17 @@ async function approve() {
 	}
 	);
 	const receipt = await tx.wait();
-	console.log("Approve transaction hash: ", receipt.transactionHash);
+	console.log("✔ Approve transaction hash: ", receipt.transactionHash, "\n");
 	if (config.autoSell) {
 		token[buyCount - 1].checkProfit();
 	} else {
 		if (buyCount == config.numberOfTokensToBuy) {
 			process.exit();
 		}
+	}
+	} catch (e) {
+	console.log("\u001b[1;31m"+"❌ Approve transaction error, check on BscScan.com"+"\u001b[0m");
+	console.log("\u001b[1;31m"+"Attention! Make sure that all active transactions and trading sessions are completed and restart the bot."+"\u001b[0m", "\n");
 	}
 
 }
@@ -138,13 +148,14 @@ async function getCurrentValue(token) {
 async function setInitialStopLoss(token) {
 	token.intitialValue = await getCurrentValue(token);
 	token.newValue = token.intitialValue;
-	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits( token.intitialValue)) - parseFloat(ethers.utils.formatUnits( token.intitialValue)) * (token.stopLossPercent / 100)).toFixed(18).toString());
+	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits( token.intitialValue)) - parseFloat(ethers.utils.formatUnits( token.intitialValue)) * (token.stopLossPercent / 100)).toFixed(8).toString());
 }
 
 async function setNewStopLoss(token) {
+	token.tslValue = await getCurrentValue(token);
 	token.newValue = token.currentValue;
-	// new stop loss equals old stop loss * trailing stop loss percent + old stop loss 
-	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.stopLoss)) * (token.trailingStopLossPercent / 100 ) + parseFloat(ethers.utils.formatUnits(token.stopLoss))).toFixed(18).toString());
+	// new stop loss equals current value - (current value * stop loss percent) 
+	token.stopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.tslValue)) - parseFloat(ethers.utils.formatUnits(token.tslValue)) * (token.stopLossPercent / 100)).toFixed(8).toString());
 }
 async function checkForProfit(token) {
 	var sellAttempts = 0;
@@ -153,16 +164,16 @@ async function checkForProfit(token) {
 		const tokenName = await token.contract.name();
 		let currentValue = await getCurrentValue(token);
 		token.currentValue = currentValue;
-		const takeProfit = (parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.profitPercent + token.tokenSellTax) / 100 + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(18).toString();
+		const takeProfit = (parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.profitPercent + token.tokenSellTax) / 100 + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(8).toString();
 		const profitDesired = ethers.utils.parseUnits(takeProfit);
-		let targetValueToSetNewStopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.newValue)) * (token.trailingStopLossPercent / 100 + token.tokenSellTax / 100) + parseFloat(ethers.utils.formatUnits(token.newValue))).toFixed(18).toString());
-		console.log(ethers.utils.formatUnits(targetValueToSetNewStopLoss));
+		let targetValueToSetNewStopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.newValue)) * (token.trailingStopLossPercent / 100 + token.tokenSellTax / 100) + parseFloat(ethers.utils.formatUnits(token.newValue))).toFixed(8).toString());
+		console.log("\u001b[38;5;81m"+"Target value for trailing StopLoss:", ethers.utils.formatUnits(targetValueToSetNewStopLoss), "\u001b[0m");
 		let stopLoss = token.stopLoss;
 
 		// if current value is greater than targetValue, set a new stop loss
 		if (currentValue.gt(targetValueToSetNewStopLoss) && token.trailingStopLossPercent > 0) {
 			setNewStopLoss(token);
-			console.log("Setting new stop loss");
+			console.log("\u001b[38;5;33m"+"Setting new StopLoss!"+"\u001b[0m");
 		}
 		let timeStamp = new Date().toLocaleString();
 		const enc = (s) => new TextEncoder().encode(s);
@@ -171,16 +182,17 @@ async function checkForProfit(token) {
 		if (currentValue.gte(profitDesired)) {
 			if (buyCount <= config.numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
 				sellAttempts++;
-				console.log("Selling", tokenName, "now profit target reached", "\n");
+				console.log("<<< Selling -", tokenName, "- now"+"\u001b[1;32m"+" Profit target "+"\u001b[0m"+"reached >>>", "\n");
 				sell(token, true);
 				token.contract.removeAllListeners();
 			}
 		}
 
 		if (currentValue.lte(stopLoss)) {
+			console.log("\u001b[38;5;33m"+"less than StopLoss!"+"\u001b[0m");
 			if (buyCount <= config.numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
 				sellAttempts++;
-				console.log("Selling", tokenName, "now stoploss reached", "\n");
+				console.log("<<< Selling -", tokenName, "- now"+"\u001b[1;31m"+" StopLoss "+"\u001b[0m"+"reached >>>", "\n");
 				sell(token, false);
 				token.contract.removeAllListeners();
 			}
@@ -219,7 +231,7 @@ async function sell(tokenObj, isProfit) {
 		}
 		);
 		const receipt = await tx.wait();
-		console.log("Sell transaction hash: ", receipt.transactionHash);
+		console.log("\u001b[1;32m"+"✔ Sell transaction hash: ", receipt.transactionHash, "\u001b[0m", "\n");
 		sellCount++;
 		token[tokenObj.index].didSell = true;
 
@@ -229,6 +241,7 @@ async function sell(tokenObj, isProfit) {
 		}
 
 	} catch (e) {
+		console.log("\u001b[1;31m"+"❌ Receipt error: transaction failed! Check on BscScan.com"+"\u001b[0m", "\n");
 	}
 }
 
@@ -386,7 +399,8 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				stopLoss: 0,
 				intitialValue: 0,
 				newValue: 0,
-				currentValue: 0
+				currentValue: 0,
+				tslValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -412,8 +426,8 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				stopLoss: 0,
 				intitialValue: 0,
 				newValue: 0,
-				currentValue: 0
-
+				currentValue: 0,
+				tslValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -439,7 +453,8 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				stopLoss: 0,
 				intitialValue: 0,
 				newValue: 0,
-				currentValue: 0
+				currentValue: 0,
+				tslValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -466,7 +481,8 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				stopLoss: 0,
 				intitialValue: 0,
 				newValue: 0,
-				currentValue: 0
+				currentValue: 0,
+				tslValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -492,7 +508,8 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 				stopLoss: 0,
 				intitialValue: 0,
 				newValue: 0,
-				currentValue: 0
+				currentValue: 0,
+				tslValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -552,7 +569,8 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				stopLoss: 0,
 				intitialValue: 0,
 				newValue: 0,
-				currentValue: 0
+				currentValue: 0,
+				tslValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -578,7 +596,8 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				stopLoss: 0,
 				intitialValue: 0,
 				newValue: 0,
-				currentValue: 0
+				currentValue: 0,
+				tslValue: 0
 
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
@@ -606,7 +625,8 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				stopLoss: 0,
 				intitialValue: 0,
 				newValue: 0,
-				currentValue: 0
+				currentValue: 0,
+				tslValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -633,7 +653,8 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				stopLoss: 0,
 				intitialValue: 0,
 				newValue: 0,
-				currentValue: 0
+				currentValue: 0,
+				tslValue: 0
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);
 			buy();
@@ -659,7 +680,8 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 				stopLoss: 0,
 				intitialValue: 0,
 				newValue: 0,
-				currentValue: 0
+				currentValue: 0,
+				tslValue: 0
 				
 			});
 			console.log('<<< Attention! Buying token now! >>> Contract:', address);

@@ -94,7 +94,7 @@ async function buy() {
 
 				}
 			});
-			await client.sendMessage('me', {message:`You bought a new token pooCoin Link: ${poocoinURL.href}`, schedule:(60 * 1) + (Date.now() / 1000)});
+			await client.sendMessage('me', {message:`You bought a new token pooCoin Link: ${poocoinURL.href}`, schedule:(15 * 1) + (Date.now() / 1000)});
 			approve();
 		}
 	} catch (e) {
@@ -239,7 +239,7 @@ async function sell(tokenObj, isProfit) {
 		console.log("\u001b[1;32m" + "✔ Sell transaction hash: ", receipt.transactionHash, "\u001b[0m", "\n");
 		sellCount++;
 		token[tokenObj.index].didSell = true;
-		await client.sendMessage('me', {message:`You sold a token`, schedule:(60 * 1) + (Date.now() / 1000)});
+		await client.sendMessage('me', {message:`You sold a token`, schedule:(15 * 1) + (Date.now() / 1000)});
 
 		if (buyCount == config.numberOfTokensToBuy) {
 			console.log("All tokens sold");
@@ -275,7 +275,7 @@ async function sell(tokenObj, isProfit) {
 			console.log("Sell transaction hash: ", receipt.transactionHash);
 			sellCount++;
 			token[tokenObj.index].didSell = true;
-			await client.sendMessage('me', {message:`You sold a token`, schedule:(60 * 1) + (Date.now() / 1000)});
+			await client.sendMessage('me', {message:`You sold a token`, schedule:(15 * 1) + (Date.now() / 1000)});
 			if (buyCount == config.numberOfTokensToBuy) {
 				console.log("All tokens sold");
 				process.exit();

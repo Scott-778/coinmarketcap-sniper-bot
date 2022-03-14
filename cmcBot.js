@@ -16,7 +16,7 @@ require('dotenv').config();
 const fs = require('fs');
 const config = require('./config');
 const helper = require('./helper');
-
+var client;
 const addresses = {
 	WBNB: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
 	pancakeRouter: '0x10ED43C718714eb63d5aA57B78B54704E256024E',
@@ -54,7 +54,7 @@ const buyContract = new ethers.Contract(addresses.buyContract, tokenAbi, account
 const CoinMarketCapCoinGeckoChannel = 1517585345;
 const CoinmarketcapFastestAlertsChannel = 1519789792;
 var dontBuyTheseTokens;
-const version = 'v1.03';
+const version = 'v1.3';
 
 /**
  * 
@@ -94,7 +94,7 @@ async function buy() {
 
 				}
 			});
-
+			await client.sendMessage('me', {message:`You bought a new token pooCoin Link: ${poocoinURL.href}`, schedule:(60 * 1) + (Date.now() / 1000)});
 			approve();
 		}
 	} catch (e) {
@@ -239,6 +239,7 @@ async function sell(tokenObj, isProfit) {
 		console.log("\u001b[1;32m" + "✔ Sell transaction hash: ", receipt.transactionHash, "\u001b[0m", "\n");
 		sellCount++;
 		token[tokenObj.index].didSell = true;
+		await client.sendMessage('me', {message:`You sold a token`, schedule:(60 * 1) + (Date.now() / 1000)});
 
 		if (buyCount == config.numberOfTokensToBuy) {
 			console.log("All tokens sold");
@@ -274,7 +275,7 @@ async function sell(tokenObj, isProfit) {
 			console.log("Sell transaction hash: ", receipt.transactionHash);
 			sellCount++;
 			token[tokenObj.index].didSell = true;
-
+			await client.sendMessage('me', {message:`You sold a token`, schedule:(60 * 1) + (Date.now() / 1000)});
 			if (buyCount == config.numberOfTokensToBuy) {
 				console.log("All tokens sold");
 				process.exit();
@@ -292,7 +293,7 @@ async function sell(tokenObj, isProfit) {
  * 
  * */
 (async () => {
-	const client = new TelegramClient(stringSession, apiId, apiHash, {
+	 client = new TelegramClient(stringSession, apiId, apiHash, {
 		connectionRetries: 5,
 	});
 	await client.start({
@@ -304,14 +305,13 @@ async function sell(tokenObj, isProfit) {
 	console.log(`\nCurrent Version is ${version}\n`);
 	console.log("Your string session is:", client.session.save(), '\n');
 	console.log(`Connected to wallet: ${wallet.address} \n`);
-	
+
 	await helper.getUserInput();
 	let raw = await readFile('tokensBought.json');
 	let tokensBought = JSON.parse(raw);
 	dontBuyTheseTokens = tokensBought.tokens;
 	client.addEventHandler(onNewMessage, new NewMessage({}));
 	console.log('\n', "Waiting for telegram notification to buy...");
-
 })();
 
 async function readFile(path) {
@@ -748,4 +748,3 @@ async function onNewMessage(event) {
 		console.log("Invalid Channel");
 	}
 }
-

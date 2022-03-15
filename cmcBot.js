@@ -222,7 +222,7 @@ async function sell(tokenObj, isProfit) {
 		const balanceToSell = ethers.utils.parseUnits(balanceString, decimals);
 		const sellAmount = await pancakeRouter.getAmountsOut(balanceToSell, tokenObj.sellPath);
 		const sellAmountsOutMin = sellAmount[1].sub(sellAmount[1].div(2));
-		if (tokenObj.tokenSellTax >= 0) {
+		if (tokenObj.tokenSellTax > 1) {
 			const tx = await pancakeRouter.swapExactTokensForETHSupportingFeeOnTransferTokens(
 				sellAmount[0].toString(),
 				0,

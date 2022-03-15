@@ -204,7 +204,6 @@ async function checkForProfit(token) {
 		console.log(e);
 	}
 }
-
 /**
  * 
  * Sell tokens
@@ -223,43 +222,25 @@ async function sell(tokenObj, isProfit) {
 		const balanceToSell = ethers.utils.parseUnits(balanceString, decimals);
 		const sellAmount = await pancakeRouter.getAmountsOut(balanceToSell, tokenObj.sellPath);
 		const sellAmountsOutMin = sellAmount[1].sub(sellAmount[1].div(2));
+		if (tokenObj.tokenSellTax >= 0) {
+			const tx = await pancakeRouter.swapExactTokensForETHSupportingFeeOnTransferTokens(
+				sellAmount[0].toString(),
+				0,
+				tokenObj.sellPath,
+				addresses.recipient,
+				Math.floor(Date.now() / 1000) + 60 * 3, {
+				gasPrice: config.myGasPriceForApproval,
+				gasLimit: config.myGasLimit,
 
-		const tx = await pancakeRouter.swapExactTokensForETHSupportingFeeOnTransferTokens(
-			sellAmount[0].toString(),
-			0,
-			tokenObj.sellPath,
-			addresses.recipient,
-			Math.floor(Date.now() / 1000) + 60 * 3, {
-			gasPrice: config.myGasPriceForApproval,
-			gasLimit: config.myGasLimit,
-
-		}
-		);
-		const receipt = await tx.wait();
-		console.log("\u001b[1;32m" + "✔ Sell transaction hash: ", receipt.transactionHash, "\u001b[0m", "\n");
-		sellCount++;
-		token[tokenObj.index].didSell = true;
-		await client.sendMessage('me', {message:`You sold a token`, schedule:(15 * 1) + (Date.now() / 1000)});
-
-		if (buyCount == config.numberOfTokensToBuy) {
-			console.log("All tokens sold");
-			process.exit();
-		}
-
-	} catch (e) {
-		try {
-			const bal = await tokenObj.contract.balanceOf(addresses.recipient);
-			const decimals = await tokenObj.contract.decimals();
-			var balanceString;
-			if (isProfit) {
-				balanceString = (parseFloat(ethers.utils.formatUnits(bal.toString(), decimals)) * (tokenObj.percentOfTokensToSellProfit / 100)).toFixed(decimals).toString();
-			} else {
-				balanceString = (parseFloat(ethers.utils.formatUnits(bal.toString(), decimals)) * (tokenObj.percentOfTokensToSellLoss / 100)).toFixed(decimals).toString();
 			}
-			const balanceToSell = ethers.utils.parseUnits(balanceString, decimals);
-			const sellAmount = await pancakeRouter.getAmountsOut(balanceToSell, tokenObj.sellPath);
-			const sellAmountsOutMin = sellAmount[1].sub(sellAmount[1].div(2));
-
+			);
+			const receipt = await tx.wait();
+			console.log("\u001b[1;32m" + "✔ Sell transaction hash: ", receipt.transactionHash, "\u001b[0m", "\n");
+			sellCount++;
+			token[tokenObj.index].didSell = true;
+			let name = await tokenObj.contract.name();
+			await client.sendMessage('me', { message: `You sold ${name}`, schedule: (15 * 1) + (Date.now() / 1000) });
+		} else {
 			const tx = await pancakeRouter.swapExactTokensForETH(
 				sellAmount[0].toString(),
 				0,
@@ -272,18 +253,21 @@ async function sell(tokenObj, isProfit) {
 			}
 			);
 			const receipt = await tx.wait();
-			console.log("Sell transaction hash: ", receipt.transactionHash);
+			console.log("\u001b[1;32m" + "✔ Sell transaction hash: ", receipt.transactionHash, "\u001b[0m", "\n");
 			sellCount++;
 			token[tokenObj.index].didSell = true;
-			await client.sendMessage('me', {message:`You sold a token`, schedule:(15 * 1) + (Date.now() / 1000)});
-			if (buyCount == config.numberOfTokensToBuy) {
-				console.log("All tokens sold");
-				process.exit();
-			}
-		} catch (e) {
-			console.log("\u001b[1;31m" + "❌ Receipt error: transaction failed! Check on BscScan.com" + "\u001b[0m", "\n");
+			let name = await tokenObj.contract.name();
+			await client.sendMessage('me', { message: `You sold ${name}`, schedule: (15 * 1) + (Date.now() / 1000) });
+
 		}
 
+		if (buyCount == config.numberOfTokensToBuy) {
+			console.log("All tokens sold");
+			process.exit();
+		}
+
+	} catch (e) {
+		console.log("\u001b[1;31m" + "❌ Receipt error: transaction failed! Check on BscScan.com" + "\u001b[0m", "\n");
 	}
 }
 

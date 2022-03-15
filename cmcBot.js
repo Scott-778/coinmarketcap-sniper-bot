@@ -168,7 +168,7 @@ async function checkForProfit(token) {
 			token.currentValue = currentValue;
 			const takeProfit = (parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.profitPercent + token.tokenSellTax) / 100 + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(8).toString();
 			const profitDesired = ethers.utils.parseUnits(takeProfit);
-			let targetValueToSetNewStopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.newValue)) * (token.trailingStopLossPercent / 100 + token.tokenSellTax / 100) + parseFloat(ethers.utils.formatUnits(token.newValue))).toFixed(8).toString());
+			let targetValueToSetNewStopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.newValue)) * (token.trailingStopLossPercent / 100) + parseFloat(ethers.utils.formatUnits(token.newValue))).toFixed(8).toString());
 			console.log("\u001b[38;5;81m" + "Target value for trailing StopLoss:", ethers.utils.formatUnits(targetValueToSetNewStopLoss), "\u001b[0m");
 			let stopLoss = token.stopLoss;
 

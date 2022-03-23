@@ -65,7 +65,6 @@ const version = 'v1.4';
  * 
  * */
 async function buy() {
-	try {
 		if (buyCount < config.numberOfTokensToBuy) {
 			const value = ethers.utils.parseUnits(token[buyCount].investmentAmount, 'ether').toString();
 			const tx = await buyContract.buyTokens(token[buyCount].tokenAddress, addresses.recipient,
@@ -100,10 +99,7 @@ async function buy() {
 			await client.sendMessage('me', { message: `You bought a new token pooCoin Link: ${poocoinURL.href}`, schedule: (15 * 1) + (Date.now() / 1000) });
 			approve();
 		}
-	} catch (e) {
-		console.log("\u001b[1;31m" + "❌ Buy transaction error, check on BscScan.com" + "\u001b[0m");
-		console.log("\u001b[1;31m" + "Attention! Make sure that all active transactions and trading sessions are completed and restart the bot." + "\u001b[0m", "\n");
-	}
+	
 
 }
 /**
@@ -112,7 +108,7 @@ async function buy() {
  * 
  * */
 async function approve() {
-	try {
+	
 		let contract = token[buyCount - 1].contract;
 		const valueToApprove = ethers.constants.MaxUint256;
 		const tx = await contract.approve(
@@ -131,10 +127,6 @@ async function approve() {
 				process.exit();
 			}
 		}
-	} catch (e) {
-		console.log("\u001b[1;31m" + "❌ Approve transaction error, check on BscScan.com" + "\u001b[0m");
-		console.log("\u001b[1;31m" + "Attention! Make sure that all active transactions and trading sessions are completed and restart the bot." + "\u001b[0m", "\n");
-	}
 
 }
 

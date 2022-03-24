@@ -224,11 +224,12 @@ async function sell(tokenObj, isProfit) {
 		const decimals = await tokenObj.contract.decimals();
 		var balanceString;
 		if (isProfit) {
-			balanceString = (parseFloat(ethers.utils.formatUnits(bal.toString(), decimals)) * (tokenObj.percentOfTokensToSellProfit / 100)).toFixed(decimals).toString();
+			balanceString = (parseFloat(ethers.utils.formatUnits(bal.toString(), decimals)) * (tokenObj.percentOfTokensToSellProfit / 100)).toFixed(decimals);
 		} else {
-			balanceString = (parseFloat(ethers.utils.formatUnits(bal.toString(), decimals)) * (tokenObj.percentOfTokensToSellLoss / 100)).toFixed(decimals).toString();
+			balanceString = (parseFloat(ethers.utils.formatUnits(bal.toString(), decimals)) * (tokenObj.percentOfTokensToSellLoss / 100)).toFixed(decimals);
 		}
-		const balanceToSell = ethers.utils.parseUnits(balanceString, decimals);
+		var roundedBalance = Math.floor(balanceString * 100) / 100
+		const balanceToSell = ethers.utils.parseUnits(roundedBalance.toString(), decimals);
 		const sellAmount = await pancakeRouter.getAmountsOut(balanceToSell, tokenObj.sellPath);
 		const sellAmountsOutMin = sellAmount[1].sub(sellAmount[1].div(2));
 		if (tokenObj.tokenSellTax > 1) {

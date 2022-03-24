@@ -238,7 +238,7 @@ async function sell(tokenObj, isProfit) {
 				0,
 				tokenObj.sellPath,
 				addresses.recipient,
-				Math.floor(Date.now() / 1000) + 60 * 3, {
+				Math.floor(Date.now() / 1000) + 60 * 20, {
 				gasPrice: config.myGasPriceForApproval,
 				gasLimit: config.myGasLimit,
 
@@ -256,7 +256,7 @@ async function sell(tokenObj, isProfit) {
 				0,
 				tokenObj.sellPath,
 				addresses.recipient,
-				Math.floor(Date.now() / 1000) + 60 * 3, {
+				Math.floor(Date.now() / 1000) + 60 * 20, {
 				gasPrice: config.myGasPriceForApproval,
 				gasLimit: config.myGasLimit,
 

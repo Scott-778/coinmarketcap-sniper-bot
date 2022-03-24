@@ -276,7 +276,7 @@ async function sell(tokenObj, isProfit) {
 		}
 
 	} catch (e) {
-		console.log("\u001b[1;31m" + "❌ Receipt error: transaction failed! Check on BscScan.com" + "\u001b[0m", "\n");
+		
 	}
 }
 

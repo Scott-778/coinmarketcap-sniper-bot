@@ -55,7 +55,7 @@ const buyContract = new ethers.Contract(addresses.buyContract, tokenAbi, account
 const CoinMarketCapCoinGeckoChannel = 1517585345;
 const CoinmarketcapFastestAlertsChannel = 1519789792;
 var dontBuyTheseTokens;
-const version = 'v1.4';
+const version = 'v1.5';
 
 
 
@@ -191,7 +191,7 @@ async function checkForProfit(token) {
 			}
 
 			if (currentValue.gte(profitDesired)) {
-				if (buyCount <= config.numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
+				if (buyCount <= config.numberOfTokensToBuy && token.didBuy && sellAttempts == 0) {
 					sellAttempts++;
 					console.log("<<< Selling -", tokenName, "- now" + "\u001b[1;32m" + " Profit target " + "\u001b[0m" + "reached >>>", "\n");
 					sell(token, true);
@@ -201,7 +201,7 @@ async function checkForProfit(token) {
 
 			if (currentValue.lte(stopLoss)) {
 				console.log("\u001b[38;5;33m" + "less than StopLoss!" + "\u001b[0m");
-				if (buyCount <= config.numberOfTokensToBuy && !token.didSell && token.didBuy && sellAttempts == 0) {
+				if (buyCount <= config.numberOfTokensToBuy && token.didBuy && sellAttempts == 0) {
 					sellAttempts++;
 					console.log("<<< Selling -", tokenName, "- now" + "\u001b[1;31m" + " StopLoss " + "\u001b[0m" + "reached >>>", "\n");
 					sell(token, false);
@@ -265,7 +265,6 @@ async function sell(tokenObj, isProfit) {
 			const receipt = await tx.wait();
 			console.log("\u001b[1;32m" + "✔ Sell transaction hash: ", receipt.transactionHash, "\u001b[0m", "\n");
 			sellCount++;
-			token[tokenObj.index].didSell = true;
 			let name = await tokenObj.contract.name();
 			await client.sendMessage('me', { message: `You sold ${name}`, schedule: (15 * 1) + (Date.now() / 1000) });
 

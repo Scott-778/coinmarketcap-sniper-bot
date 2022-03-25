@@ -55,7 +55,7 @@ const buyContract = new ethers.Contract(addresses.buyContract, tokenAbi, account
 const CoinMarketCapCoinGeckoChannel = 1517585345;
 const CoinmarketcapFastestAlertsChannel = 1519789792;
 var dontBuyTheseTokens;
-const version = 'v1.5';
+const version = 'v1.6';
 
 
 
@@ -235,7 +235,7 @@ async function sell(tokenObj, isProfit) {
 		if (tokenObj.tokenSellTax > 1) {
 			const tx = await pancakeRouter.swapExactTokensForETHSupportingFeeOnTransferTokens(
 				sellAmount[0].toString(),
-				sellAmountsOutMin,
+				0,
 				tokenObj.sellPath,
 				addresses.recipient,
 				Math.floor(Date.now() / 1000) + 60 * 20, {
@@ -253,7 +253,7 @@ async function sell(tokenObj, isProfit) {
 		} else {
 			const tx = await pancakeRouter.swapExactTokensForETH(
 				sellAmount[0].toString(),
-				sellAmountsOutMin,
+				0,
 				tokenObj.sellPath,
 				addresses.recipient,
 				Math.floor(Date.now() / 1000) + 60 * 20, {

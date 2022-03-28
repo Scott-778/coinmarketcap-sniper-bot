@@ -55,7 +55,7 @@ const buyContract = new ethers.Contract(addresses.buyContract, tokenAbi, account
 const CoinMarketCapCoinGeckoChannel = 1517585345;
 const CoinmarketcapFastestAlertsChannel = 1519789792;
 var dontBuyTheseTokens;
-const version = 'v1.6';
+const version = 'v1.7';
 
 
 
@@ -130,16 +130,24 @@ async function approve() {
 
 }
 
+
 /**
  * 
  * Check for profit
  * 
  * */
 async function getCurrentValue(token) {
-	let bal = await token.contract.balanceOf(addresses.recipient);
-	const amount = await pancakeRouter.getAmountsOut(bal, token.sellPath);
-	let currentValue = amount[1];
-	return currentValue;
+	try {
+		let bal = await token.contract.balanceOf(addresses.recipient);
+		const amount = await pancakeRouter.getAmountsOut(bal, token.sellPath);
+		let currentValue = amount[1];
+		return currentValue;
+	}
+	catch (e) {
+		console.log('Balance is zero or error occured');
+		return ethers.constants.Zero;
+	}
+
 }
 async function setInitialStopLoss(token) {
 	token.intitialValue = await getCurrentValue(token);
@@ -160,54 +168,57 @@ async function checkForProfit(token) {
 			token.previousValue = token.currentValue;
 			const tokenName = await token.contract.name();
 			let currentValue = await getCurrentValue(token);
-			token.currentValue = currentValue;
-			let currentValueString = parseFloat(ethers.utils.formatUnits(currentValue)).toFixed(8).toString();
-			const takeProfit = (parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.profitPercent + token.tokenSellTax) / 100 + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(8).toString();
-			const profitDesired = ethers.utils.parseUnits(takeProfit);
-			let targetValueToSetNewStopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.newValue)) * (token.trailingStopLossPercent / 100) + parseFloat(ethers.utils.formatUnits(token.newValue))).toFixed(8).toString());
-			let stopLoss = token.stopLoss;
+			if (!currentValue.eq(ethers.constants.Zero)) {
+				token.currentValue = currentValue;
+				let currentValueString = parseFloat(ethers.utils.formatUnits(currentValue)).toFixed(8).toString();
+				const takeProfit = (parseFloat(ethers.utils.formatUnits(token.intitialValue)) * (token.profitPercent + token.tokenSellTax) / 100 + parseFloat(ethers.utils.formatUnits(token.intitialValue))).toFixed(8).toString();
+				const profitDesired = ethers.utils.parseUnits(takeProfit);
+				let targetValueToSetNewStopLoss = ethers.utils.parseUnits((parseFloat(ethers.utils.formatUnits(token.newValue)) * (token.trailingStopLossPercent / 100) + parseFloat(ethers.utils.formatUnits(token.newValue))).toFixed(8).toString());
+				let stopLoss = token.stopLoss;
 
-			// if current value is greater than targetValue, set a new stop loss
-			if (currentValue.gt(targetValueToSetNewStopLoss) && token.trailingStopLossPercent > 0) {
-				setNewStopLoss(token);
-				console.log("\u001b[38;5;33m" + "Setting new StopLoss!" + "\u001b[0m");
-			}
-			let timeStamp = new Date().toLocaleString();
-			const enc = (s) => new TextEncoder().encode(s);
-			//process.stdout.write(enc(`${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(stopLoss)} \r`));
-			try {
-				if (token.previousValue.gt(token.currentValue)) {
+				// if current value is greater than targetValue, set a new stop loss
+				if (currentValue.gt(targetValueToSetNewStopLoss) && token.trailingStopLossPercent > 0) {
+					setNewStopLoss(token);
+					console.log("\u001b[38;5;33m" + "Setting new StopLoss!" + "\u001b[0m");
+				}
+				let timeStamp = new Date().toLocaleString();
+				const enc = (s) => new TextEncoder().encode(s);
+				//process.stdout.write(enc(`${timeStamp} --- ${tokenName} --- Current Value in BNB: ${ethers.utils.formatUnits(currentValue)} --- Profit At: ${ethers.utils.formatUnits(profitDesired)} --- Stop Loss At: ${ethers.utils.formatUnits(stopLoss)} \r`));
+				try {
+					if (token.previousValue.gt(token.currentValue)) {
 
-					console.log(`-- ${tokenName} -- Current Value BNB: ${"\u001b[1;31m" + currentValueString + "\u001b[0m"} -- Profit At: ${ethers.utils.formatUnits(profitDesired)} -- Stop Loss At: ${ethers.utils.formatUnits(token.stopLoss)} -- New Stop loss At: ${ethers.utils.formatUnits(targetValueToSetNewStopLoss)}`);
+						console.log(`-- ${tokenName} -- Current Value BNB: ${"\u001b[1;31m" + currentValueString + "\u001b[0m"} -- Profit At: ${ethers.utils.formatUnits(profitDesired)} -- Stop Loss At: ${ethers.utils.formatUnits(token.stopLoss)} -- New Stop loss At: ${ethers.utils.formatUnits(targetValueToSetNewStopLoss)}`);
 
-				} else {
+					} else {
 
-					console.log(`-- ${tokenName} -- Current Value BNB: ${"\u001b[1;32m" + currentValueString + "\u001b[0m"} -- Profit At: ${ethers.utils.formatUnits(profitDesired)} -- Stop Loss At: ${ethers.utils.formatUnits(token.stopLoss)} -- New Stop loss At: ${ethers.utils.formatUnits(targetValueToSetNewStopLoss)}`);
+						console.log(`-- ${tokenName} -- Current Value BNB: ${"\u001b[1;32m" + currentValueString + "\u001b[0m"} -- Profit At: ${ethers.utils.formatUnits(profitDesired)} -- Stop Loss At: ${ethers.utils.formatUnits(token.stopLoss)} -- New Stop loss At: ${ethers.utils.formatUnits(targetValueToSetNewStopLoss)}`);
+
+					}
+				}
+				catch (e) {
 
 				}
-			}
-			catch (e) {
 
-			}
+				if (currentValue.gte(profitDesired)) {
+					if (buyCount <= config.numberOfTokensToBuy && token.didBuy && sellAttempts == 0) {
+						sellAttempts++;
+						console.log("<<< Selling -", tokenName, "- now" + "\u001b[1;32m" + " Profit target " + "\u001b[0m" + "reached >>>", "\n");
+						sell(token, true);
+						token.contract.removeAllListeners();
+					}
+				}
 
-			if (currentValue.gte(profitDesired)) {
-				if (buyCount <= config.numberOfTokensToBuy && token.didBuy && sellAttempts == 0) {
-					sellAttempts++;
-					console.log("<<< Selling -", tokenName, "- now" + "\u001b[1;32m" + " Profit target " + "\u001b[0m" + "reached >>>", "\n");
-					sell(token, true);
-					token.contract.removeAllListeners();
+				if (currentValue.lte(stopLoss)) {
+					console.log("\u001b[38;5;33m" + "less than StopLoss!" + "\u001b[0m");
+					if (buyCount <= config.numberOfTokensToBuy && token.didBuy && sellAttempts == 0) {
+						sellAttempts++;
+						console.log("<<< Selling -", tokenName, "- now" + "\u001b[1;31m" + " StopLoss " + "\u001b[0m" + "reached >>>", "\n");
+						sell(token, false);
+						token.contract.removeAllListeners();
+					}
 				}
 			}
 
-			if (currentValue.lte(stopLoss)) {
-				console.log("\u001b[38;5;33m" + "less than StopLoss!" + "\u001b[0m");
-				if (buyCount <= config.numberOfTokensToBuy && token.didBuy && sellAttempts == 0) {
-					sellAttempts++;
-					console.log("<<< Selling -", tokenName, "- now" + "\u001b[1;31m" + " StopLoss " + "\u001b[0m" + "reached >>>", "\n");
-					sell(token, false);
-					token.contract.removeAllListeners();
-				}
-			}
 		});
 	} catch (e) {
 		console.log(e);

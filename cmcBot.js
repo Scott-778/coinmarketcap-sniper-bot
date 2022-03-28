@@ -45,7 +45,8 @@ let tokenAbi = [
 	'event Transfer(address indexed from, address indexed to, uint amount)',
 	'function name() view returns (string)',
 	'function buyTokens(address tokenAddress, address to) payable',
-	'function decimals() external view returns (uint8)'
+	'function decimals() external view returns (uint8)',
+	'function fifteenMinutesLock() public view returns (uint256)'
 ];
 
 let token = [];
@@ -55,9 +56,7 @@ const buyContract = new ethers.Contract(addresses.buyContract, tokenAbi, account
 const CoinMarketCapCoinGeckoChannel = 1517585345;
 const CoinmarketcapFastestAlertsChannel = 1519789792;
 var dontBuyTheseTokens;
-const version = 'v1.7';
-
-
+const version = 'v1.8';
 
 /**
  * 
@@ -65,43 +64,55 @@ const version = 'v1.7';
  * 
  * */
 async function buy() {
-		if (buyCount < config.numberOfTokensToBuy) {
-			const value = ethers.utils.parseUnits(token[buyCount].investmentAmount, 'ether').toString();
-			const tx = await buyContract.buyTokens(token[buyCount].tokenAddress, addresses.recipient,
-				{
-					value: value,
-					gasPrice: token[buyCount].gasPrice,
-					gasLimit: config.myGasLimit
+	var isScam;
+	try {
+		// Some scam contracts have been showing up on CMC channel recently including token contracts like BEE INU and No Limit Ape tokens 
+		// if contract has fifteenMinutesLock function it is most likly from the same scammer and we are not going to buy it.
+		var s = await token[buyCount].contract.fifteenMinutesLock();
+		isScam = true;
+		console.log('Possible Scam Token not buying');
+		token.pop();
+		
+	} catch (e) {
+		// No fifTeenMinutesLock function we should buy it
+		isScam = false;
+	}
+	if (buyCount < config.numberOfTokensToBuy && isScam == false) {
+		const value = ethers.utils.parseUnits(token[buyCount].investmentAmount, 'ether').toString();
+		const tx = await buyContract.buyTokens(token[buyCount].tokenAddress, addresses.recipient,
+			{
+				value: value,
+				gasPrice: token[buyCount].gasPrice,
+				gasLimit: config.myGasLimit
+
+			});
+		const receipt = await tx.wait();
+		console.log("\u001b[1;32m" + "✔ Buy transaction hash: ", receipt.transactionHash, "\u001b[0m");
+		token[buyCount].didBuy = true;
+		const poocoinURL = new URL(token[buyCount].tokenAddress, 'https://poocoin.app/tokens/');
+		open(poocoinURL.href);
+
+		buyCount++;
+		fs.readFile('tokensBought.json', 'utf8', function readFileCallback(err, data) {
+			if (err) {
+
+			} else {
+				var obj = JSON.parse(data);
+				obj.tokens.push({ address: token[buyCount - 1].tokenAddress });
+				json = JSON.stringify(obj, null, 4);
+				fs.writeFile('tokensBought.json', json, 'utf8', function (err) {
+					if (err) throw err;
 
 				});
-			const receipt = await tx.wait();
-			console.log("\u001b[1;32m" + "✔ Buy transaction hash: ", receipt.transactionHash, "\u001b[0m");
-			token[buyCount].didBuy = true;
-			const poocoinURL = new URL(token[buyCount].tokenAddress, 'https://poocoin.app/tokens/');
-			open(poocoinURL.href);
-
-			buyCount++;
-			fs.readFile('tokensBought.json', 'utf8', function readFileCallback(err, data) {
-				if (err) {
-
-				} else {
-					var obj = JSON.parse(data);
-					obj.tokens.push({ address: token[buyCount - 1].tokenAddress });
-					json = JSON.stringify(obj, null, 4);
-					fs.writeFile('tokensBought.json', json, 'utf8', function (err) {
-						if (err) throw err;
-
-					});
 
 
-				}
-			});
-			await client.sendMessage('me', { message: `You bought a new token pooCoin Link: ${poocoinURL.href}`, schedule: (15 * 1) + (Date.now() / 1000) });
-			approve();
-		}
-	
-
+			}
+		});
+		await client.sendMessage('me', { message: `You bought a new token pooCoin Link: ${poocoinURL.href}`, schedule: (15 * 1) + (Date.now() / 1000) });
+		approve();
+	}
 }
+
 /**
  * 
  * Approve tokens

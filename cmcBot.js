@@ -292,7 +292,7 @@ async function sell(tokenObj, isProfit) {
 
 		}
 
-		if (buyCount == config.numberOfTokensToBuy) {
+		if (sellCount == config.numberOfTokensToBuy) {
 			console.log("All tokens sold");
 			process.exit();
 		}

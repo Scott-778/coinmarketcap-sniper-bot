@@ -70,7 +70,7 @@ async function buy() {
 		// if contract has fifteenMinutesLock function it is most likly from the same scammer and we are not going to buy it.
 		var s = await token[buyCount].contract.fifteenMinutesLock();
 		isScam = true;
-		console.log('Possible Scam Token not buying');
+		console.log("\u001b[1;31m" + 'Scam Token not buying' + "\u001b[0m" , "\n");
 		token.pop();
 		
 	} catch (e) {

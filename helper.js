@@ -11,6 +11,22 @@ async function getUserInput() {
     const choices2 = ['COINMARKETCAP', 'COINGECKO'];
     const channelChoices = ['CoinGecko & CoinMarketCap Listing Alerts', 'Coinmarketcap Fastest Alerts'];
     await input.select('Welcome, please choose a buying strategy', choices).then(async function (answers) {
+         if (answers == 'Default') {
+            console.log('\n', 'Your strategy is', config.userStrategy);
+            if (config.userStrategy == "LL") {
+                console.log(config.strategyLL);
+            } else if (config.userStrategy == "ML") {
+                console.log(config.strategyML);
+            } else if (config.userStrategy == "HL") {
+                console.log(config.strategyHL);
+            } else if (config.userStrategy == "BA") {
+                console.log(config.buyAllTokensStrategy);
+            } else if (config.userStrategy == "Custom") {
+                console.log(config.customStrategy);
+            } else {
+                console.log("Invalid Strategy");
+            }
+        }
         if (answers == 'Buy All Tokens') {
             config.numberOfTokensToBuy = parseInt(await input.text("Enter number of different tokens you want to buy"));
             config.buyAllTokensStrategy.investmentAmount = await input.text("Enter Investment Amount in BNB");

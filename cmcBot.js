@@ -436,7 +436,7 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 			}
 		}
 		// Buy low-liquid tokens
-		if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes(config.strategyLL.platform)) {
+		if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes(config.strategyLL.platform) && config.userStrategy == 'LL') {
 			token.push({
 				tokenAddress: address,
 				didBuy: false,
@@ -463,7 +463,7 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 			buy();
 		}
 		// Buy medium-liquid tokens
-		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes(config.strategyML.platform)) {
+		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes(config.strategyML.platform) && config.userStrategy == 'ML') {
 			token.push({
 				tokenAddress: address,
 				didBuy: false,
@@ -490,7 +490,7 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 			buy();
 		}
 		//Buy high-liquid tokens
-		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes(config.strategyHL.platform)) {
+		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes(config.strategyHL.platform) && config.userStrategy == 'HL') {
 			token.push({
 				tokenAddress: address,
 				didBuy: false,
@@ -518,7 +518,7 @@ function onNewMessageCoinGeckoCoinMarketCap(message) {
 
 		}
 		// Custom Strategy
-		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes(config.customStrategy.platform)) {
+		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes(config.customStrategy.platform) && config.userStrategy == 'Custom') {
 			token.push({
 				tokenAddress: address,
 				didBuy: false,
@@ -606,7 +606,7 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 			}
 		}
 		// Buy low-liquid tokens
-		if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes("Insider")) {
+		if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes("Insider") && config.userStrategy == 'LL') {
 			token.push({
 				tokenAddress: address,
 				didBuy: false,
@@ -633,7 +633,7 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 			buy();
 		}
 		// Buy medium-liquid tokens
-		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes("Insider")) {
+		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes("Insider") && config.userStrategy == 'ML') {
 			token.push({
 				tokenAddress: address,
 				didBuy: false,
@@ -661,7 +661,7 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 			buy();
 		}
 		//Buy high-liquid tokens
-		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes("Insider")) {
+		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes("Insider") && config.userStrategy == 'HL') {
 			token.push({
 				tokenAddress: address,
 				didBuy: false,
@@ -690,7 +690,7 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 
 		}
 		// Custom Strategy
-		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes("Insider")) {
+		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes("Insider") && config.userStrategy == 'Custom') {
 			token.push({
 				tokenAddress: address,
 				didBuy: false,
@@ -717,7 +717,7 @@ function onNewMessageCoinMarketCapFastestAlerts(message) {
 			buy();
 		}
 		// Buy all tokens no strategy
-		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes("Insider")) {
+		else if (isStrategy(liquidity, slipBuy, slipSell, msg, address) && msg.includes("Insider") && config.userStrategy == 'BA') {
 			token.push({
 				tokenAddress: address,
 				didBuy: false,

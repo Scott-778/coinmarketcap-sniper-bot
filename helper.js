@@ -11,7 +11,7 @@ async function getUserInput() {
     const choices2 = ['COINMARKETCAP', 'COINGECKO'];
     const channelChoices = ['CoinGecko & CoinMarketCap Listing Alerts', 'Coinmarketcap Fastest Alerts'];
     await input.select('Welcome, please choose a buying strategy', choices).then(async function (answers) {
-         if (answers == 'Default') {
+        if (answers == 'Default') {
             console.log('\n', 'Your strategy is', config.userStrategy);
             if (config.userStrategy == "LL") {
                 console.log(config.strategyLL);
@@ -53,6 +53,7 @@ async function getUserInput() {
             config.strategyLL.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
             config.strategyLL.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
             config.strategyLL.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
+            config.strategyLL.minSellTax = parseFloat(await input.text("Enter min sell tax"));
             config.strategyLL.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
             config.strategyLL.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
             config.strategyLL.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
@@ -83,6 +84,7 @@ async function getUserInput() {
             config.strategyML.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
             config.strategyML.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
             config.strategyML.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
+            config.strategyML.minSellTax = parseFloat(await input.text("Enter min sell tax"));
             config.strategyML.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
             config.strategyML.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
             config.strategyML.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
@@ -115,6 +117,7 @@ async function getUserInput() {
             config.strategyHL.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
             config.strategyHL.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
             config.strategyHL.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
+            config.strategyHL.minSellTax = parseFloat(await input.text("Enter min sell tax"));
             config.strategyHL.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
             config.strategyHL.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
             config.strategyHL.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
@@ -148,6 +151,7 @@ async function getUserInput() {
             config.customStrategy.maxBuyTax = parseFloat(await input.text("Enter max buying tax"));
             config.customStrategy.minBuyTax = parseFloat(await input.text("Enter min buying tax"));
             config.customStrategy.maxSellTax = parseFloat(await input.text("Enter max sell tax"));
+            config.customStrategy.minSellTax = parseFloat(await input.text("Enter min sell tax"));
             config.customStrategy.profitPercent = parseFloat(await input.text("Enter profit percent you want"));
             config.customStrategy.stopLossPercent = parseFloat(await input.text("Enter max loss percent"));
             config.customStrategy.trailingStopLossPercent = parseFloat(await input.text("Enter trailing stop loss percent"));
@@ -170,6 +174,8 @@ async function getUserInput() {
                 }
             });
             config.userStrategy = 'Custom';
+            console.log(config.customStrategy);
+            console.log(config.userStrategy);
         }
 
     });

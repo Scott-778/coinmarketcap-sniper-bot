@@ -56,7 +56,7 @@ const buyContract = new ethers.Contract(addresses.buyContract, tokenAbi, account
 const CoinMarketCapCoinGeckoChannel = 1517585345;
 const CoinmarketcapFastestAlertsChannel = 1519789792;
 var dontBuyTheseTokens;
-const version = 'v1.8';
+const version = 'v1.9';
 
 /**
  * 
@@ -354,6 +354,7 @@ function didNotBuy(address) {
 	return true;
 }
 
+
 function isStrategy(liquidity, buyTax, sellTax, msg, address) {
 	if (config.userStrategy == 'BA') {
 		if (msg.includes('BNB') && didNotBuy(address)) {
@@ -366,6 +367,7 @@ function isStrategy(liquidity, buyTax, sellTax, msg, address) {
 			buyTax <= config.strategyLL.maxBuyTax &&
 			buyTax >= config.strategyLL.minBuyTax &&
 			sellTax <= config.strategyLL.maxSellTax &&
+			sellTax >= config.strategyLL.minSellTax &&
 			msg.includes("BNB") && didNotBuy(address)) {
 			return true;
 		}
@@ -376,6 +378,7 @@ function isStrategy(liquidity, buyTax, sellTax, msg, address) {
 			buyTax <= config.strategyML.maxBuyTax &&
 			buyTax >= config.strategyML.minBuyTax &&
 			sellTax <= config.strategyML.maxSellTax &&
+			sellTax >= config.strategyML.minSellTax &&
 			msg.includes("BNB") && didNotBuy(address)) {
 			return true;
 		}
@@ -385,7 +388,9 @@ function isStrategy(liquidity, buyTax, sellTax, msg, address) {
 			liquidity >= config.strategyHL.minLiquidity &&
 			buyTax <= config.strategyHL.maxBuyTax &&
 			buyTax >= config.strategyHL.minBuyTax &&
-			sellTax <= config.strategyHL.maxSellTax && msg.includes("BNB") && didNotBuy(address)) {
+			sellTax <= config.strategyHL.maxSellTax && 
+			sellTax >= config.strategyHL.minSellTax
+			&& msg.includes("BNB") && didNotBuy(address)) {
 			return true;
 		}
 
@@ -394,14 +399,14 @@ function isStrategy(liquidity, buyTax, sellTax, msg, address) {
 			liquidity >= config.customStrategy.minLiquidity &&
 			buyTax <= config.customStrategy.maxBuyTax &&
 			buyTax >= config.customStrategy.minBuyTax &&
-			sellTax <= config.customStrategy.maxSellTax && msg.includes("BNB") && didNotBuy(address)) {
+			sellTax <= config.customStrategy.maxSellTax && 
+			sellTax >= config.customStrategy.minSellTax && msg.includes("BNB") && didNotBuy(address)) {
 			return true;
 		}
 
 	}
 	return false;
 }
-
 
 function onNewMessageCoinGeckoCoinMarketCap(message) {
 	if (message.peerId.channelId == CoinMarketCapCoinGeckoChannel) {

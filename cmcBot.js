@@ -74,16 +74,16 @@ async function buy() {
 		
 	} catch (e) {
 		isScam = false;
-		try {
-			var s = await token[buyCount].contract.isMintable();
-			isScam = true;
-			console.log("\u001b[1;31m" + 'Scam Token not buying (Moonseer dev)' + "\u001b[0m" , "\n");
-			token.pop();
-			
-		} catch (e) {
-			// Not moonseer dev contract
-			isScam = false;
-		}
+	}
+	try {
+		var s = await token[buyCount].contract.isMintable();
+		isScam = true;
+		console.log("\u001b[1;31m" + 'Scam Token not buying (Moonseer dev)' + "\u001b[0m" , "\n");
+		token.pop();
+
+	} catch (e) {
+		// Not moonseer dev contract
+		isScam = false;
 	}
 	
 	if (buyCount < config.numberOfTokensToBuy && isScam == false) {

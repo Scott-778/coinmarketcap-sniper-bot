@@ -46,7 +46,8 @@ let tokenAbi = [
 	'function name() view returns (string)',
 	'function buyTokens(address tokenAddress, address to) payable',
 	'function decimals() external view returns (uint8)',
-	'function fifteenMinutesLock() public view returns (uint256)'
+	'function fifteenMinutesLock() public view returns (uint256)',
+	'function isMintable() public view returns (uint256)'
 ];
 
 let token = [];
@@ -66,17 +67,25 @@ const version = 'v1.9';
 async function buy() {
 	var isScam;
 	try {
-		// Some scam contracts have been showing up on CMC channel recently including token contracts like BEE INU and No Limit Ape tokens 
-		// if contract has fifteenMinutesLock function it is most likly from the same scammer and we are not going to buy it.
 		var s = await token[buyCount].contract.fifteenMinutesLock();
 		isScam = true;
 		console.log("\u001b[1;31m" + 'Scam Token not buying' + "\u001b[0m" , "\n");
 		token.pop();
 		
 	} catch (e) {
-		// No fifTeenMinutesLock function we should buy it
 		isScam = false;
+		try {
+			var s = await token[buyCount].contract.isMintable();
+			isScam = true;
+			console.log("\u001b[1;31m" + 'Scam Token not buying (Moonseer dev)' + "\u001b[0m" , "\n");
+			token.pop();
+			
+		} catch (e) {
+			// Not moonseer dev contract
+			isScam = false;
+		}
 	}
+	
 	if (buyCount < config.numberOfTokensToBuy && isScam == false) {
 		const value = ethers.utils.parseUnits(token[buyCount].investmentAmount, 'ether').toString();
 		const tx = await buyContract.buyTokens(token[buyCount].tokenAddress, addresses.recipient,

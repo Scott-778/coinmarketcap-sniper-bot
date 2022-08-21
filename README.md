@@ -57,13 +57,9 @@ Soon I will add support for different Telegram channels.
 
 ## Social
 Join my telegram group where we can talk about this project, tokens and the best strategies. https://t.me/CoinMarketCapSniperBot
-## Tips
-If you like my project and want to tip me please send BNB to this address 0xcF1bFe5782c647e2D6e4f82A84CCE567b859991C
 
-![Screenshot (10)](https://user-images.githubusercontent.com/91510798/175796944-c6e1960a-08c2-4b86-892d-720fc64d7632.png)
 
-## Contribute
-If you can code and want to make this project better please feel free to contribute.
+
 ## Disclaimer
 Use at your own risk. Investing in cryptocurrency is risky. This is not financial advice.
 There is a small 0.7% buying fee per buy. This is to help me buy a cup of coffee and support for this project. 
